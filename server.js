@@ -49,58 +49,7 @@ function saveUsers(users) {
     fs.writeFileSync(USERS_FILE, JSON.stringify(users, null, 2), 'utf8');
 }
 
-// ====== CAPTCHA Store (in-memory, expires after 3 minutes) ======
-const captchaStore = new Map();
 
-function generateCaptcha() {
-    const ops = ['+', '-', '×'];
-    const op = ops[Math.floor(Math.random() * ops.length)];
-    let a, b, answer;
-
-    if (op === '+') {
-        a = Math.floor(Math.random() * 40) + 5;
-        b = Math.floor(Math.random() * 30) + 3;
-        answer = a + b;
-    } else if (op === '-') {
-        a = Math.floor(Math.random() * 40) + 15;
-        b = Math.floor(Math.random() * (a - 1)) + 1;
-        answer = a - b;
-    } else {
-        a = Math.floor(Math.random() * 9) + 2;
-        b = Math.floor(Math.random() * 9) + 2;
-        answer = a * b;
-    }
-
-    const sessionId = crypto.randomBytes(16).toString('hex');
-    captchaStore.set(sessionId, {
-        answer: answer,
-        expiresAt: Date.now() + 3 * 60 * 1000 // 3 minutes
-    });
-
-    // Cleanup expired captchas periodically
-    if (captchaStore.size > 500) {
-        const now = Date.now();
-        for (const [key, val] of captchaStore) {
-            if (now > val.expiresAt) captchaStore.delete(key);
-        }
-    }
-
-    return { sessionId, question: `${a} ${op} ${b} = ?`, answer };
-}
-
-function verifyCaptcha(sessionId, userAnswer) {
-    const entry = captchaStore.get(sessionId);
-    if (!entry) return { valid: false, error: 'CAPTCHA expired. Please refresh and try again.' };
-    if (Date.now() > entry.expiresAt) {
-        captchaStore.delete(sessionId);
-        return { valid: false, error: 'CAPTCHA expired. Please refresh and try again.' };
-    }
-    captchaStore.delete(sessionId); // One-time use
-    if (parseInt(userAnswer) !== entry.answer) {
-        return { valid: false, error: 'Wrong CAPTCHA answer. Please try again.' };
-    }
-    return { valid: true };
-}
 
 // ====== JWT Middleware ======
 function authenticateToken(req, res, next) {
@@ -124,26 +73,11 @@ function requireAdmin(req, res, next) {
 
 // ====== AUTH ROUTES ======
 
-// GET /api/captcha — Generate a new CAPTCHA question
-app.get('/api/captcha', (req, res) => {
-    const { sessionId, question } = generateCaptcha();
-    res.json({ sessionId, question });
-});
-
-// POST /api/login — Verify CAPTCHA + credentials, issue JWT
+// POST /api/login — Verify credentials, issue JWT
 app.post('/api/login', authLimiter, async (req, res) => {
-    const { username, password, captchaId, captchaAnswer } = req.body;
+    const { username, password } = req.body;
     if (!username || !password) {
         return res.status(400).json({ error: 'Username and password are required' });
-    }
-
-    // Validate CAPTCHA first
-    if (!captchaId || captchaAnswer === undefined || captchaAnswer === '') {
-        return res.status(400).json({ error: 'Please solve the CAPTCHA' });
-    }
-    const captchaResult = verifyCaptcha(captchaId, captchaAnswer);
-    if (!captchaResult.valid) {
-        return res.status(400).json({ error: captchaResult.error });
     }
 
     const users = loadUsers();

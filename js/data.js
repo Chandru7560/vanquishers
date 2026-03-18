@@ -235,22 +235,13 @@ const VanquishersData = {
     this.save(key, items);
   },
 
-  // ====== Auth (JWT-based with CAPTCHA) ======
-  async getCaptcha() {
-    try {
-      const res = await fetch(`${this.API_BASE}/api/captcha`);
-      return await res.json();
-    } catch (e) {
-      return { sessionId: '', question: 'Error loading CAPTCHA' };
-    }
-  },
-
-  async login(username, password, captchaId, captchaAnswer) {
+  // ====== Auth (JWT-based) ======
+  async login(username, password) {
     try {
       const res = await fetch(`${this.API_BASE}/api/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password, captchaId, captchaAnswer })
+        body: JSON.stringify({ username, password })
       });
       const data = await res.json();
       if (!res.ok) return { success: false, error: data.error };

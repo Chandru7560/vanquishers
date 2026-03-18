@@ -136,17 +136,6 @@ const App = {
                 </button>
               </div>
             </div>
-            <div class="form-group captcha-group">
-              <label>Verify you're human</label>
-              <div class="captcha-box">
-                <div class="captcha-question" id="captchaQuestion">Loading...</div>
-                <button type="button" class="captcha-refresh" id="captchaRefresh" title="Get new CAPTCHA">
-                <img src="assets/refresh.png" alt="Reload" />
-              </button>
-              </div>
-              <input type="number" id="captchaAnswer" placeholder="Your answer" autocomplete="off" />
-              <input type="hidden" id="captchaId" />
-            </div>
             <button type="submit" class="login-btn" id="loginBtn">Sign In</button>
             <div class="login-error" id="loginError">Invalid username or password</div>
           </form>
@@ -154,10 +143,6 @@ const App = {
       </div>
     `;
 
-    // Load CAPTCHA
-    await this.loadCaptcha();
-
-    document.getElementById('captchaRefresh').addEventListener('click', () => this.loadCaptcha());
 
     document.getElementById('passwordToggle').addEventListener('click', () => {
       const passInput = document.getElementById('loginPass');
@@ -184,31 +169,19 @@ const App = {
       e.preventDefault();
       const user = document.getElementById('loginUser').value.trim().toLowerCase();
       const pass = document.getElementById('loginPass').value;
-      const captchaId = document.getElementById('captchaId').value;
-      const captchaAnswer = document.getElementById('captchaAnswer').value.trim();
       const btn = document.getElementById('loginBtn');
       const errorEl = document.getElementById('loginError');
-
-      if (!captchaAnswer) {
-        errorEl.textContent = 'Please solve the CAPTCHA';
-        errorEl.classList.add('show');
-        setTimeout(() => errorEl.classList.remove('show'), 3000);
-        return;
-      }
 
       btn.textContent = 'Signing in...';
       btn.disabled = true;
 
-      const result = await VanquishersData.login(user, pass, captchaId, captchaAnswer);
+      const result = await VanquishersData.login(user, pass);
 
       if (!result.success) {
         errorEl.textContent = result.error;
         errorEl.classList.add('show');
         btn.textContent = 'Sign In';
         btn.disabled = false;
-        // Refresh CAPTCHA on failed attempt
-        await this.loadCaptcha();
-        document.getElementById('captchaAnswer').value = '';
         setTimeout(() => errorEl.classList.remove('show'), 3000);
         return;
       }
@@ -217,12 +190,6 @@ const App = {
     });
   },
 
-  async loadCaptcha() {
-    const data = await VanquishersData.getCaptcha();
-    document.getElementById('captchaQuestion').textContent = data.question;
-    document.getElementById('captchaId').value = data.sessionId;
-    document.getElementById('captchaAnswer').value = '';
-  },
 
   // ====== Dashboard Layout ======
   showDashboard() {
