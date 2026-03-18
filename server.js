@@ -1,57 +1,43 @@
 /* =====================================================
    VANQUISHERS - Express Server
-   Authentication, CAPTCHA, and Access Control
+   MongoDB Integrated - Authentication & Data API
    ===================================================== */
 
 require('dotenv').config();
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const crypto = require('crypto');
+const mongoose = require('mongoose');
 const rateLimit = require('express-rate-limit');
 const path = require('path');
-const fs = require('fs');
+const cors = require('cors');
+const { User, Player, Alumni, Match, Point, Memory, Auction } = require('./models');
 
 const app = express();
-const cors = require('cors');
-
-// Allow multiple origins for testing and production
 app.use(cors());
-
-const PORT = process.env.PORT || 3000;
-const JWT_SECRET = process.env.JWT_SECRET || 'vanquishers_default_secret_change_me';
-
-// ====== Middleware ======
 app.use(express.json());
 app.use(express.static(path.join(__dirname)));
 
-// Rate limiting for auth endpoints (brute force protection)
+const PORT = process.env.PORT || 3000;
+const JWT_SECRET = process.env.JWT_SECRET || 'vanquishers_default_secret_change_me';
+const MONGODB_URI = process.env.MONGODB_URI;
+
+// ====== MongoDB Connection ======
+if (!MONGODB_URI || MONGODB_URI.includes('your_mongodb_atlas_connection_string')) {
+    console.warn('⚠️ MONGODB_URI is not set. Database features will not work.');
+} else {
+    mongoose.connect(MONGODB_URI)
+        .then(() => console.log('✅ Connected to MongoDB Atlas'))
+        .catch(err => console.error('❌ MongoDB connection error:', err));
+}
+
+// ====== Middleware ======
 const authLimiter = rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 30, // max 30 attempts per window
-    message: { error: 'Too many attempts. Please try again after 15 minutes.' },
-    standardHeaders: true,
-    legacyHeaders: false
+    windowMs: 15 * 60 * 1000,
+    max: 100, // Increased for general usage
+    message: { error: 'Too many requests. Please try again later.' }
 });
 
-// ====== Data Helpers ======
-const USERS_FILE = path.join(__dirname, 'data', 'users.json');
-
-function loadUsers() {
-    if (!fs.existsSync(USERS_FILE)) {
-        console.error('❌ data/users.json not found. Run: npm run seed');
-        return [];
-    }
-    return JSON.parse(fs.readFileSync(USERS_FILE, 'utf8'));
-}
-
-function saveUsers(users) {
-    fs.writeFileSync(USERS_FILE, JSON.stringify(users, null, 2), 'utf8');
-}
-
-
-
-// ====== JWT Middleware ======
 function authenticateToken(req, res, next) {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
@@ -73,75 +59,159 @@ function requireAdmin(req, res, next) {
 
 // ====== AUTH ROUTES ======
 
-// POST /api/login — Verify credentials, issue JWT
 app.post('/api/login', authLimiter, async (req, res) => {
     const { username, password } = req.body;
     if (!username || !password) {
         return res.status(400).json({ error: 'Username and password are required' });
     }
 
-    const users = loadUsers();
-    const user = users.find(u => u.username === username.toLowerCase().trim());
-    if (!user) {
-        return res.status(401).json({ error: 'Invalid username or password' });
+    try {
+        const user = await User.findOne({ username: username.toLowerCase().trim() });
+        if (!user) return res.status(401).json({ error: 'Invalid username or password' });
+
+        const validPassword = await bcrypt.compare(password, user.password);
+        if (!validPassword) return res.status(401).json({ error: 'Invalid username or password' });
+
+        const token = jwt.sign(
+            { username: user.username, role: user.role, displayName: user.displayName, batchYear: user.batchYear },
+            JWT_SECRET,
+            { expiresIn: '24h' }
+        );
+
+        res.json({
+            token,
+            user: { username: user.username, role: user.role, displayName: user.displayName, batchYear: user.batchYear }
+        });
+    } catch (err) {
+        res.status(500).json({ error: 'Server error' });
     }
-
-    const validPassword = await bcrypt.compare(password, user.password);
-    if (!validPassword) {
-        return res.status(401).json({ error: 'Invalid username or password' });
-    }
-
-    // Issue JWT token directly
-    const token = jwt.sign(
-        { username: user.username, role: user.role, displayName: user.displayName, batchYear: user.batchYear },
-        JWT_SECRET,
-        { expiresIn: '24h' }
-    );
-
-    res.json({
-        token,
-        user: { username: user.username, role: user.role, displayName: user.displayName, batchYear: user.batchYear }
-    });
 });
 
-// POST /api/change-password — Admin only: change any user's password
 app.post('/api/change-password', authenticateToken, requireAdmin, async (req, res) => {
     const { targetUsername, newPassword } = req.body;
-    if (!targetUsername || !newPassword) {
-        return res.status(400).json({ error: 'Target username and new password are required' });
-    }
-    if (newPassword.length < 6) {
-        return res.status(400).json({ error: 'Password must be at least 6 characters' });
+    if (!targetUsername || !newPassword || newPassword.length < 6) {
+        return res.status(400).json({ error: 'Invalid input' });
     }
 
-    const users = loadUsers();
-    const userIndex = users.findIndex(u => u.username === targetUsername);
-    if (userIndex === -1) {
-        return res.status(404).json({ error: 'User not found' });
+    try {
+        const hash = await bcrypt.hash(newPassword, 10);
+        const result = await User.findOneAndUpdate({ username: targetUsername }, { password: hash });
+        if (!result) return res.status(404).json({ error: 'User not found' });
+        res.json({ message: `Password changed for ${targetUsername}` });
+    } catch (err) {
+        res.status(500).json({ error: 'Server error' });
     }
-
-    const hash = await bcrypt.hash(newPassword, 10);
-    users[userIndex].password = hash;
-    saveUsers(users);
-
-    res.json({ message: `Password changed for ${targetUsername}` });
 });
 
-// GET /api/users — Admin only: list all users (no passwords)
-app.get('/api/users', authenticateToken, requireAdmin, (req, res) => {
-    const users = loadUsers().map(u => ({
-        username: u.username,
-        email: u.email,
-        role: u.role,
-        batchYear: u.batchYear,
-        displayName: u.displayName
-    }));
-    res.json(users);
+app.get('/api/users', authenticateToken, requireAdmin, async (req, res) => {
+    try {
+        const users = await User.find({}, '-password');
+        res.json(users);
+    } catch (err) {
+        res.status(500).json({ error: 'Server error' });
+    }
 });
 
-// GET /api/me — Get current user info from token
 app.get('/api/me', authenticateToken, (req, res) => {
     res.json(req.user);
+});
+
+// ====== DATA ROUTES ======
+
+// Generic GET all
+const createGetRoute = (path, Model) => {
+    app.get(path, async (req, res) => {
+        try {
+            const data = await Model.find().sort({ id: 1 });
+            res.json(data);
+        } catch (err) {
+            res.status(500).json({ error: err.message });
+        }
+    });
+};
+
+createGetRoute('/api/players', Player);
+createGetRoute('/api/alumni', Alumni);
+createGetRoute('/api/matches', Match);
+createGetRoute('/api/points', Point);
+
+// Generic POST/PUT/DELETE for Admin
+const createAdminRoutes = (basePath, Model) => {
+    app.post(basePath, authenticateToken, requireAdmin, async (req, res) => {
+        try {
+            const newItem = new Model(req.body);
+            await newItem.save();
+            res.json(newItem);
+        } catch (err) {
+            res.status(500).json({ error: err.message });
+        }
+    });
+
+    app.put(`${basePath}/:id`, authenticateToken, requireAdmin, async (req, res) => {
+        try {
+            const updated = await Model.findOneAndUpdate({ id: req.params.id }, req.body, { new: true });
+            res.json(updated);
+        } catch (err) {
+            res.status(500).json({ error: err.message });
+        }
+    });
+
+    app.delete(`${basePath}/:id`, authenticateToken, requireAdmin, async (req, res) => {
+        try {
+            await Model.findOneAndDelete({ id: req.params.id });
+            res.json({ message: 'Deleted' });
+        } catch (err) {
+            res.status(500).json({ error: err.message });
+        }
+    });
+};
+
+createAdminRoutes('/api/players', Player);
+createAdminRoutes('/api/alumni', Alumni);
+createAdminRoutes('/api/matches', Match);
+createAdminRoutes('/api/points', Point);
+
+// Memories
+app.get('/api/memories/:alumniId', async (req, res) => {
+    try {
+        const memories = await Memory.find({ alumniId: req.params.alumniId }).sort({ addedAt: -1 });
+        res.json(memories);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.post('/api/memories', async (req, res) => {
+    try {
+        const memory = new Memory(req.body);
+        await memory.save();
+        res.json(memory);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// Auction
+app.get('/api/auction', async (req, res) => {
+    try {
+        const auction = await Auction.findOne({ key: 'current_auction' });
+        res.json(auction ? auction.data : null);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.post('/api/auction', authenticateToken, requireAdmin, async (req, res) => {
+    try {
+        await Auction.findOneAndUpdate(
+            { key: 'current_auction' },
+            { data: req.body },
+            { upsert: true }
+        );
+        res.json({ message: 'Auction saved' });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
 });
 
 // ====== Serve frontend ======
@@ -149,13 +219,6 @@ app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-// ====== Start Server ======
 app.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
-    if (!fs.existsSync(USERS_FILE)) {
-        console.log('Default players and alumni seeded! Run: npm run seed');
-    } else {
-        const users = loadUsers();
-        console.log(`Loaded ${users.length} users`);
-    }
+    console.log(`🚀 Server running on http://localhost:${PORT}`);
 });
