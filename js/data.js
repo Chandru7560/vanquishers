@@ -13,7 +13,7 @@ const VanquishersData = {
     alumni: [],
     matches: [],
     points: [],
-    memories: {}, // Cache by alumniId
+    memories: [], 
     auction: null
   },
 
@@ -117,7 +117,7 @@ const VanquishersData = {
       });
       const updatedItem = await res.json();
       if (res.ok) {
-        const idx = this._cache[key].findIndex(i => i.id === id);
+        const idx = this._cache[key].findIndex(i => (i._id === id || i.id === id));
         if (idx !== -1) this._cache[key][idx] = updatedItem;
         return updatedItem;
       }
@@ -136,7 +136,7 @@ const VanquishersData = {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (res.ok) {
-        this._cache[key] = this._cache[key].filter(i => i.id !== id);
+        this._cache[key] = this._cache[key].filter(i => (i._id !== id && i.id !== id));
         return true;
       }
     } catch (e) {
@@ -269,6 +269,12 @@ const VanquishersData = {
     try {
       const res = await fetch(`${this.API_BASE}/api/memories/${alumniId}`);
       const memories = await res.json();
+      // Update cache with these memories, preventing duplicates
+      memories.forEach(m => {
+        const idx = this._cache.memories.findIndex(cached => cached._id === m._id);
+        if (idx !== -1) this._cache.memories[idx] = m;
+        else this._cache.memories.push(m);
+      });
       return memories;
     } catch (e) {
       console.error('Error fetching alumni memories:', e);
@@ -287,7 +293,11 @@ const VanquishersData = {
         },
         body: JSON.stringify(memory)
       });
-      return await res.json();
+      const newItem = await res.json();
+      if (res.ok) {
+        this._cache.memories.push(newItem);
+      }
+      return newItem;
     } catch (e) {
       console.error('Error adding memory:', e);
       return null;
@@ -305,7 +315,12 @@ const VanquishersData = {
         },
         body: JSON.stringify(updates)
       });
-      return await res.json();
+      const updatedItem = await res.json();
+      if (res.ok) {
+        const idx = this._cache.memories.findIndex(m => (m._id === memoryId || m.id === memoryId));
+        if (idx !== -1) this._cache.memories[idx] = updatedItem;
+      }
+      return updatedItem;
     } catch (e) {
       console.error('Error updating memory:', e);
       return null;
@@ -319,25 +334,27 @@ const VanquishersData = {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` }
       });
-      return res.ok;
+      if (res.ok) {
+        this._cache.memories = this._cache.memories.filter(m => (m._id !== memoryId && m.id !== memoryId));
+        return true;
+      }
     } catch (e) {
       console.error('Error removing memory:', e);
-      return false;
     }
+    return false;
   },
 
   async getAllMemories() {
     try {
-      // We can fetch 'general' memories as a base or implement a /api/memories/all endpoint
-      // For now, let's fetch 'general' plus any others if needed, 
-      // but ideally we have a specific endpoint for the gallery
       const res = await fetch(`${this.API_BASE}/api/memories/all`);
-      if (res.ok) return await res.json();
-      
-      // Fallback: just general
+      if (res.ok) {
+        const all = await res.json();
+        this._cache.memories = all;
+        return all;
+      }
       return await this.getAlumniMemories('general');
     } catch (e) {
-      return [];
+      return this._cache.memories || [];
     }
   },
 
