@@ -78,6 +78,9 @@ const memorySchema = new mongoose.Schema({
     alumniId: { type: String, required: true }, // Can be alumni numeric ID or 'general'
     content: { type: String, required: true },
     author: { type: String, required: true },
+    name: { type: String },
+    fileType: { type: String },
+    photo: { type: String, default: '' },
     addedAt: { type: Date, default: Date.now }
 }, { timestamps: true });
 

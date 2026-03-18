@@ -12,11 +12,19 @@ const rateLimit = require('express-rate-limit');
 const path = require('path');
 const cors = require('cors');
 const { User, Player, Alumni, Match, Point, Memory, Auction } = require('./models');
+const { upload } = require('./cloudinary');
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname)));
+
+// ====== UPLOAD ROUTE ======
+// Returns the Cloudinary URL for the uploaded file
+app.post('/api/upload', authenticateToken, upload.single('photo'), (req, res) => {
+    if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
+    res.json({ url: req.file.path }); // req.file.path is the Cloudinary URL
+});
 
 const PORT = process.env.PORT || 3000;
 const JWT_SECRET = process.env.JWT_SECRET || 'vanquishers_default_secret_change_me';
@@ -172,6 +180,15 @@ createAdminRoutes('/api/matches', Match);
 createAdminRoutes('/api/points', Point);
 
 // Memories
+app.get('/api/memories/all', async (req, res) => {
+    try {
+        const memories = await Memory.find().sort({ addedAt: -1 });
+        res.json(memories);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
 app.get('/api/memories/:alumniId', async (req, res) => {
     try {
         const memories = await Memory.find({ alumniId: req.params.alumniId }).sort({ addedAt: -1 });
@@ -181,11 +198,32 @@ app.get('/api/memories/:alumniId', async (req, res) => {
     }
 });
 
-app.post('/api/memories', async (req, res) => {
+app.post('/api/memories', authenticateToken, async (req, res) => {
     try {
-        const memory = new Memory(req.body);
+        const memory = new Memory({
+            ...req.body,
+            author: req.body.author || req.user.displayName || req.user.username
+        });
         await memory.save();
         res.json(memory);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.put('/api/memories/:id', authenticateToken, async (req, res) => {
+    try {
+        const updated = await Memory.findByIdAndUpdate(req.params.id, req.body, { new: true });
+        res.json(updated);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.delete('/api/memories/:id', authenticateToken, async (req, res) => {
+    try {
+        await Memory.findByIdAndDelete(req.params.id);
+        res.json({ message: 'Deleted' });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }

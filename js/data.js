@@ -56,6 +56,26 @@ const VanquishersData = {
     }
   },
 
+  async uploadFile(file) {
+    const token = localStorage.getItem('vanq_token');
+    const formData = new FormData();
+    formData.append('photo', file);
+
+    try {
+      const res = await fetch(`${this.API_BASE}/api/upload`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}` },
+        body: formData
+      });
+      const data = await res.json();
+      if (res.ok) return data.url;
+      throw new Error(data.error || 'Upload failed');
+    } catch (e) {
+      console.error('Upload Error:', e);
+      return null;
+    }
+  },
+
   // ====== Generic CRUD (Internal Cache + Backend Sync) ======
   getAll(key) {
     return this._cache[key] || [];
@@ -245,38 +265,80 @@ const VanquishersData = {
     }
   },
 
-  // ====== Memories ======
   async getAlumniMemories(alumniId) {
     try {
       const res = await fetch(`${this.API_BASE}/api/memories/${alumniId}`);
-      return await res.json();
+      const memories = await res.json();
+      return memories;
     } catch (e) {
+      console.error('Error fetching alumni memories:', e);
       return [];
     }
   },
 
-  async addMemory(alumniId, memory) {
+  async addMemory(memory) {
+    const token = localStorage.getItem('vanq_token');
     try {
       const res = await fetch(`${this.API_BASE}/api/memories`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...memory, alumniId })
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(memory)
       });
       return await res.json();
     } catch (e) {
+      console.error('Error adding memory:', e);
       return null;
     }
   },
 
-  async getBatchMemories(year) {
-    const all = await this.getAllMemories();
-    const alumni = this.getAll('alumni').filter(a => parseInt(a.batchYear) === year);
-    const alumniIds = alumni.map(a => String(a.id));
-    return all.filter(m => alumniIds.includes(String(m.alumniId)));
+  async updateMemory(memoryId, updates) {
+    const token = localStorage.getItem('vanq_token');
+    try {
+      const res = await fetch(`${this.API_BASE}/api/memories/${memoryId}`, {
+        method: 'PUT',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(updates)
+      });
+      return await res.json();
+    } catch (e) {
+      console.error('Error updating memory:', e);
+      return null;
+    }
+  },
+
+  async removeMemory(memoryId) {
+    const token = localStorage.getItem('vanq_token');
+    try {
+      const res = await fetch(`${this.API_BASE}/api/memories/${memoryId}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      return res.ok;
+    } catch (e) {
+      console.error('Error removing memory:', e);
+      return false;
+    }
   },
 
   async getAllMemories() {
-    return []; // Placeholder
+    try {
+      // We can fetch 'general' memories as a base or implement a /api/memories/all endpoint
+      // For now, let's fetch 'general' plus any others if needed, 
+      // but ideally we have a specific endpoint for the gallery
+      const res = await fetch(`${this.API_BASE}/api/memories/all`);
+      if (res.ok) return await res.json();
+      
+      // Fallback: just general
+      return await this.getAlumniMemories('general');
+    } catch (e) {
+      return [];
+    }
   },
 
   async updateMatchScore(id, scoreA, scoreB, set, status) {

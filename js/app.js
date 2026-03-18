@@ -508,15 +508,19 @@ const App = {
   renderGalleryItem(mem) {
     const canEdit = VanquishersData.isLoggedIn();
     const ext = mem.name.split('.').pop().toLowerCase();
-    const isImage = ['png', 'jpg', 'jpeg', 'gif', 'webp', 'heic', 'heif', 'bmp', 'svg'].includes(ext);
-    const isVideo = ['mp4', 'mov', 'webm', 'avi', 'mkv', 'm4v'].includes(ext);
-    const isAudio = ['mp3', 'm4a', 'aac', 'wav', 'ogg', 'flac'].includes(ext);
 
     let preview = '';
+    const photoUrl = mem.photo || mem.data; // Backwards compatibility for now
+    const type = (mem.fileType || '').toLowerCase() || (mem.name.split('.').pop().toLowerCase());
+    
+    const isImage = ['png', 'jpg', 'jpeg', 'gif', 'webp', 'heic', 'heif', 'bmp', 'svg'].some(ext => type.includes(ext));
+    const isVideo = ['mp4', 'mov', 'webm', 'avi', 'mkv', 'm4v'].some(ext => type.includes(ext));
+    const isAudio = ['mp3', 'm4a', 'aac', 'wav', 'ogg', 'flac'].some(ext => type.includes(ext));
+
     if (isImage) {
-      preview = `<img src="${mem.data}" alt="${mem.name}" class="memory-preview-img" />`;
+      preview = `<img src="${photoUrl}" alt="${mem.name}" class="memory-preview-img" />`;
     } else if (isVideo) {
-      preview = `<video src="${mem.data}" class="memory-preview-video" preload="metadata"></video><div class="video-overlay">${this.Icons.camera}</div>`;
+      preview = `<video src="${photoUrl}" class="memory-preview-video" preload="metadata"></video><div class="video-overlay">${this.Icons.camera}</div>`;
     } else if (isAudio) {
       preview = `<div class="memory-audio-icon-gallery">${this.Icons.music}</div>`;
     } else {
@@ -525,16 +529,16 @@ const App = {
 
     return `
       <div class="memory-item gallery-item" onclick="App.showMemoriesModal('${mem.alumniId}')">
-        <div class="memory-preview" onclick="event.stopPropagation(); App.viewMemoryFullscreen('${mem.alumniId}', ${mem.id})" style="cursor:pointer" title="View Fullscreen">${preview}</div>
+        <div class="memory-preview" onclick="event.stopPropagation(); App.viewMemoryFullscreen('${mem.alumniId}', '${mem._id || mem.id}')" style="cursor:pointer" title="View Fullscreen">${preview}</div>
         <div class="memory-info">
-          <span class="memory-name" title="${mem.name}">${mem.name.length > 15 ? mem.name.substring(0, 13) + '...' : mem.name}</span>
-          <span class="memory-author">${mem.alumniName}</span>
+          <span class="memory-name" title="${mem.name || mem.content}">${(mem.name || mem.content || '').length > 15 ? (mem.name || mem.content).substring(0, 13) + '...' : (mem.name || mem.content)}</span>
+          <span class="memory-author">${mem.author || 'Unknown'}</span>
           <span class="memory-date">${new Date(mem.addedAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}</span>
         </div>
         ${canEdit ? `
         <div class="memory-actions global-actions">
-           <button class="btn btn-secondary btn-small" onclick="event.stopPropagation(); App.editMemory('${mem.alumniId}', ${mem.id})">${this.Icons.edit}</button>
-           <button class="btn btn-danger btn-small" onclick="event.stopPropagation(); App.deleteMemory('${mem.alumniId}', ${mem.id})">${this.Icons.trash}</button>
+           <button class="btn btn-secondary btn-small" onclick="event.stopPropagation(); App.editMemory('${mem.alumniId}', '${mem._id || mem.id}')">${this.Icons.edit}</button>
+           <button class="btn btn-danger btn-small" onclick="event.stopPropagation(); App.deleteMemory('${mem.alumniId}', '${mem._id || mem.id}')">${this.Icons.trash}</button>
         </div>
         ` : ''}
       </div>
@@ -563,19 +567,13 @@ const App = {
   },
 
   viewMemoryFullscreen(alumniId, memoryId) {
-    let memory;
-    if (alumniId === 'general') {
-       const store = VanquishersData._getMemoriesStore();
-       memory = (store['general'] || []).find(m => m.id === memoryId);
-    } else {
-       memory = VanquishersData.getAlumniMemories(alumniId).find(m => m.id === memoryId);
-    }
+    const memories = VanquishersData.getAll('memories');
+    const memory = memories.find(m => (m._id === memoryId || m.id === memoryId));
     if (!memory) return;
 
     const overlay = document.createElement('div');
     overlay.className = 'fullscreen-viewer-overlay';
     
-    // Close on background click
     overlay.addEventListener('click', (e) => {
       if (e.target === overlay) {
         overlay.classList.remove('show');
@@ -593,22 +591,25 @@ const App = {
 
     const header = document.createElement('div');
     header.className = 'fullscreen-header';
-    header.innerHTML = `<div class="fullscreen-header-title">${memory.name}</div>`;
+    header.innerHTML = `<div class="fullscreen-header-title">${memory.name || memory.content}</div>`;
 
     let content = '';
-    const isImage = memory.type.startsWith('image/');
-    const isVideo = memory.type.startsWith('video/');
-    const isAudio = memory.type.startsWith('audio/');
+    const photoUrl = memory.photo || memory.data;
+    const type = (memory.fileType || '').toLowerCase() || (memory.name.split('.').pop().toLowerCase());
+    
+    const isImage = ['png', 'jpg', 'jpeg', 'gif', 'webp', 'heic', 'heif', 'bmp', 'svg'].some(ext => type.includes(ext));
+    const isVideo = ['mp4', 'mov', 'webm', 'avi', 'mkv', 'm4v'].some(ext => type.includes(ext));
+    const isAudio = ['mp3', 'm4a', 'aac', 'wav', 'ogg', 'flac'].some(ext => type.includes(ext));
 
     if (isImage) {
-      content = `<img src="${memory.data}" alt="${memory.name}" class="fullscreen-content" />`;
+      content = `<img src="${photoUrl}" alt="${memory.name}" class="fullscreen-content" />`;
     } else if (isVideo) {
-      content = `<video src="${memory.data}" controls autoplay class="fullscreen-content"></video>`;
+      content = `<video src="${photoUrl}" controls autoplay class="fullscreen-content"></video>`;
     } else if (isAudio) {
       content = `
         <div class="fullscreen-audio-container fullscreen-content">
            <div style="font-size: 64px; color: var(--accent-cyan);">${this.Icons.music}</div>
-           <audio src="${memory.data}" controls autoplay style="width: 100%;"></audio>
+           <audio src="${photoUrl}" controls autoplay style="width: 100%;"></audio>
         </div>
       `;
     } else {
@@ -616,7 +617,7 @@ const App = {
         <div class="fullscreen-audio-container fullscreen-content">
            <div style="font-size: 64px; color: var(--text-muted);">${this.Icons.file}</div>
            <p style="color: white; margin-top: 10px;">${memory.name}</p>
-           <a href="${memory.data}" download="${memory.name}" class="btn btn-primary" style="margin-top:20px;">Download File</a>
+           <a href="${photoUrl}" download="${memory.name}" class="btn btn-primary" style="margin-top:20px;">Download File</a>
         </div>
       `;
     }
@@ -626,7 +627,6 @@ const App = {
     overlay.appendChild(header);
 
     document.body.appendChild(overlay);
-    // Trigger paint before adding class for smooth animation
     requestAnimationFrame(() => {
        overlay.classList.add('show');
     });
@@ -640,16 +640,16 @@ const App = {
     }
   },
 
-  showMemoriesModal(alumniId) {
+  async showMemoriesModal(alumniId) {
     let alumniName = 'General';
     if (alumniId !== 'general') {
-       const alumni = VanquishersData.getAll('alumni').find(a => a.id === alumniId);
+       const alumni = VanquishersData.getAll('alumni').find(a => String(a.id) === String(alumniId));
        if (!alumni) return;
        alumniName = alumni.name;
     }
     
-    const memories = VanquishersData.getAlumniMemories(alumniId);
-    // Allow any logged-in user to upload and edit
+    this.showToast('Loading memories...', 'info');
+    const memories = await VanquishersData.getAlumniMemories(alumniId);
     const canEdit = VanquishersData.isLoggedIn();
 
     const overlay = document.createElement('div');
@@ -657,33 +657,35 @@ const App = {
     overlay.id = 'memoriesModal';
 
     const renderMemoryItem = (mem) => {
-      const ext = mem.name.split('.').pop().toLowerCase();
-      const isImage = ['png', 'jpg', 'jpeg', 'gif', 'webp', 'heic', 'heif', 'bmp', 'svg'].includes(ext);
-      const isVideo = ['mp4', 'mov', 'webm', 'avi', 'mkv', 'm4v'].includes(ext);
-      const isAudio = ['mp3', 'm4a', 'aac', 'wav', 'ogg', 'flac'].includes(ext);
+      const photoUrl = mem.photo || mem.data;
+      const type = (mem.fileType || '').toLowerCase() || (mem.name.split('.').pop().toLowerCase());
+      
+      const isImage = ['png', 'jpg', 'jpeg', 'gif', 'webp', 'heic', 'heif', 'bmp', 'svg'].some(ext => type.includes(ext));
+      const isVideo = ['mp4', 'mov', 'webm', 'avi', 'mkv', 'm4v'].some(ext => type.includes(ext));
+      const isAudio = ['mp3', 'm4a', 'aac', 'wav', 'ogg', 'flac'].some(ext => type.includes(ext));
 
       let preview = '';
       if (isImage) {
-        preview = `<img src="${mem.data}" alt="${mem.name}" class="memory-preview-img" />`;
+        preview = `<img src="${photoUrl}" alt="${mem.name}" class="memory-preview-img" />`;
       } else if (isVideo) {
-        preview = `<video src="${mem.data}" class="memory-preview-video" controls preload="metadata"></video>`;
+        preview = `<video src="${photoUrl}" class="memory-preview-video" controls preload="metadata"></video>`;
       } else if (isAudio) {
-        preview = `<div class="memory-audio-wrap"><div class="memory-audio-icon">${this.Icons.music}</div><audio src="${mem.data}" controls preload="metadata" class="memory-audio-player"></audio></div>`;
+        preview = `<div class="memory-audio-wrap"><div class="memory-audio-icon">${this.Icons.music}</div><audio src="${photoUrl}" controls preload="metadata" class="memory-audio-player"></audio></div>`;
       } else {
-        preview = `<div class="memory-file-icon">${this.Icons.file} ${mem.name}</div>`;
+        preview = `<div class="memory-file-icon">${this.Icons.file} ${mem.name || mem.content}</div>`;
       }
 
       return `
-        <div class="memory-item" data-id="${mem.id}">
-          <div class="memory-preview" onclick="App.viewMemoryFullscreen('${alumniId}', ${mem.id})" style="cursor:pointer" title="View Fullscreen">${preview}</div>
+        <div class="memory-item" data-id="${mem._id || mem.id}">
+          <div class="memory-preview" onclick="App.viewMemoryFullscreen('${alumniId}', '${mem._id || mem.id}')" style="cursor:pointer" title="View Fullscreen">${preview}</div>
           <div class="memory-info">
-            <span class="memory-name" title="${mem.name}">${mem.name.length > 20 ? mem.name.substring(0, 18) + '...' : mem.name}</span>
+            <span class="memory-name" title="${mem.name || mem.content}">${(mem.name || mem.content || '').length > 20 ? (mem.name || mem.content).substring(0, 18) + '...' : (mem.name || mem.content)}</span>
             <span class="memory-date">${new Date(mem.addedAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
           </div>
           ${canEdit ? `
             <div class="memory-actions global-actions">
-              <button class="btn btn-secondary btn-small" onclick="event.stopPropagation(); App.editMemory('${alumniId}', ${mem.id})" title="Edit">${this.Icons.edit}</button>
-              <button class="btn btn-danger btn-small" onclick="event.stopPropagation(); App.deleteMemory('${alumniId}', ${mem.id})" title="Delete">${this.Icons.trash}</button>
+              <button class="btn btn-secondary btn-small" onclick="event.stopPropagation(); App.editMemory('${alumniId}', '${mem._id || mem.id}')" title="Edit">${this.Icons.edit}</button>
+              <button class="btn btn-danger btn-small" onclick="event.stopPropagation(); App.deleteMemory('${alumniId}', '${mem._id || mem.id}')" title="Delete">${this.Icons.trash}</button>
             </div>
           ` : ''}
         </div>
@@ -713,7 +715,6 @@ const App = {
     `;
 
     document.body.appendChild(overlay);
-    // Clean modal removal on overlay click
     overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.remove(); });
   },
 
@@ -724,55 +725,53 @@ const App = {
     }
   },
 
-  processMemoryFiles(alumniId, files) {
-    let processed = 0;
+  async processMemoryFiles(alumniId, files) {
+    let uploadedCount = 0;
     const total = files.length;
+    const author = VanquishersData.getUser().displayName || VanquishersData.getUser().user;
 
-    Array.from(files).forEach(file => {
-      // Limit to 15MB per file before compression
+    this.showToast(`Uploading ${total} file(s)...`, 'info');
+
+    for (const file of Array.from(files)) {
       if (file.size > 15 * 1024 * 1024) {
-        this.showToast(`${file.name} is too large (max 15MB per file)`, 'error');
-        processed++;
-        if (processed === total) this.showMemoriesModal(alumniId);
-        return;
+        this.showToast(`${file.name} is too large (max 15MB)`, 'error');
+        continue;
       }
 
-      if (file.type.startsWith('image/')) {
-        this.compressImage(file, (base64) => {
-          this._saveMemoryWithData(alumniId, file.name, file.type, base64, () => {
-             processed++;
-             if (processed === total) this._finishMemoryUpload(alumniId, total);
-          });
-        });
-      } else {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-           this._saveMemoryWithData(alumniId, file.name, file.type, e.target.result, () => {
-             processed++;
-             if (processed === total) this._finishMemoryUpload(alumniId, total);
-           });
+      const url = await VanquishersData.uploadFile(file);
+      if (url) {
+        const memory = {
+          alumniId,
+          content: file.name, // Use name as content
+          author: author,
+          photo: url,
+          name: file.name,
+          fileType: file.type
         };
-        reader.readAsDataURL(file);
+        await VanquishersData.add('memories', memory);
+        uploadedCount++;
       }
-    });
+    }
+
+    this._finishMemoryUpload(alumniId, uploadedCount);
   },
 
-  _saveMemoryWithData(alumniId, name, type, data, callback) {
-     const memory = { name, type, data };
-     const result = VanquishersData.addMemory(alumniId, memory);
-     if (!result) {
-       this.showToast('Storage is full! Cannot save more memories.', 'error');
-     }
-     callback();
-  },
-  editMemory(alumniId, memoryId) {
-    const memories = VanquishersData.getAlumniMemories(alumniId);
-    const memory = memories.find(m => m.id === memoryId);
-    if (!memory) return;
+  async editMemory(alumniId, memoryId) {
+    const memories = await VanquishersData.getAlumniMemories(alumniId);
+    const memory = memories.find(m => (m._id === memoryId || m.id === memoryId));
+    if (!memory) {
+      // If not in batch, check all
+      const all = await VanquishersData.getAllMemories();
+      const m2 = all.find(m => (m._id === memoryId || m.id === memoryId));
+      if (!m2) return;
+      memoryId = m2._id;
+    } else {
+      memoryId = memory._id;
+    }
 
-    const newName = prompt('Enter new name for this memory:', memory.name);
-    if (newName && newName.trim() && newName !== memory.name) {
-      VanquishersData.updateMemory(alumniId, memoryId, { name: newName.trim() });
+    const newName = prompt('Enter new name for this memory:', memory.name || memory.content);
+    if (newName && newName.trim() && newName !== (memory.name || memory.content)) {
+      await VanquishersData.updateMemory(memoryId, { name: newName.trim(), content: newName.trim() });
       document.getElementById('memoriesModal')?.remove();
       this.showMemoriesModal(alumniId);
       this.showToast('Memory renamed');
@@ -785,9 +784,14 @@ const App = {
      this.showToast(`${total} file(s) uploaded!`);
   },
 
-  deleteMemory(alumniId, memoryId) {
+  async deleteMemory(alumniId, memoryId) {
     if (confirm('Delete this memory?')) {
-      VanquishersData.removeMemory(alumniId, memoryId);
+      const memories = await VanquishersData.getAlumniMemories(alumniId);
+      const memory = memories.find(m => (m._id === memoryId || m.id === memoryId));
+      let targetId = memoryId;
+      if (memory?._id) targetId = memory._id;
+
+      await VanquishersData.removeMemory(targetId);
       document.getElementById('memoriesModal')?.remove();
       this.showMemoriesModal(alumniId);
       this.showToast('Memory deleted');
@@ -801,22 +805,26 @@ const App = {
     }
   },
 
-  processPhotoFile(type, id, file) {
+  async processPhotoFile(type, id, file) {
     if (file.size > 15 * 1024 * 1024) {
       this.showToast('Photo is too large (max 15MB)', 'error');
       return;
     }
 
-    this.compressImage(file, (base64) => {
-      VanquishersData.update(type, id, { photo: base64 });
+    this.showToast('Uploading...', 'info');
+    const url = await VanquishersData.uploadFile(file);
+    
+    if (url) {
+      await VanquishersData.update(type, id, { photo: url });
       this.showToast('Profile photo updated!');
-      // Refresh current view
       if (this.currentPage === 'players') this.navigate('players');
       else if (this.currentPage === 'alumni') {
         const alumni = VanquishersData.getAll('alumni').find(a => a.id === id);
         if (alumni) this.viewBatch(alumni.batchYear);
       }
-    });
+    } else {
+      this.showToast('Upload failed', 'error');
+    }
   },
 
   compressImage(file, callback) {
