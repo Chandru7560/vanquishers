@@ -1,0 +1,834 @@
+[
+  {
+    "username": "admin",
+    "password": "$2a$10$.SjV.WETncZ/mk7kZ1IA7uYpsKKrhU11Ii/SeJQshylSXPGeH.teK",
+    "email": "vanquisherstce@gmail.com",
+    "role": "admin",
+    "batchYear": null,
+    "displayName": "Admin"
+  },
+  {
+    "username": "viewer",
+    "password": "$2a$10$Zi3kzxyENNxP1OYBPlvf.ui6lY8slYIlh4Ee.hDN7zzSgCttOK606",
+    "email": "",
+    "role": "viewer",
+    "batchYear": null,
+    "displayName": "Viewer"
+  },
+  {
+    "username": "karthik_10",
+    "password": "$2a$10$bV8.35f2/FP9B.ImKdV3mu8w/RK5NN1NHKTozFkuakPKQja5NU5te",
+    "email": "kartheelc04@gmail.com",
+    "role": "player",
+    "batchYear": 2010,
+    "displayName": "Karthik"
+  },
+  {
+    "username": "kamaraj_10",
+    "password": "$2a$10$MH5ExLwGaRzON0CyxE..6uJaEXQ1oexLUDqR2l4Nfw6h.OVufdBg2",
+    "email": "kamaraj88salem@gmail.com",
+    "role": "player",
+    "batchYear": 2010,
+    "displayName": "Kamaraj"
+  },
+  {
+    "username": "muthu_kumar_11",
+    "password": "$2a$10$tuEhXzDPotRJvKQ7CUoInebzv1stfx16ubfGTe45mtHumTpeq5kUa",
+    "email": "iminon17@gmail.com",
+    "role": "player",
+    "batchYear": 2011,
+    "displayName": "Muthu"
+  },
+  {
+    "username": "yashwanth_11",
+    "password": "$2a$10$BW.v6VJfxaPno8gYVKLRwO4tlIZGYhePpnYObhfl65CAmc/2kKUOK",
+    "email": "cl.yashwanth@gmail.com",
+    "role": "player",
+    "batchYear": 2011,
+    "displayName": "Yashwanth"
+  },
+  {
+    "username": "arun_kumar_11",
+    "password": "$2a$10$QAMcq9NnoHhhSY0RJcCDzO/dSLI.nTUKtjo.28tLCAs/ROMp79WMy",
+    "email": "arunmechtce@gmail.com",
+    "role": "player",
+    "batchYear": 2011,
+    "displayName": "Arun"
+  },
+  {
+    "username": "ram_12",
+    "password": "$2a$10$Hv4yKpgMNh0elN.MU7OENun0TvaLzEigHjwyK9oIjZn5tvyLQ0Pb6",
+    "email": "ramrbkv@gmail.com",
+    "role": "player",
+    "batchYear": 2012,
+    "displayName": "Ram"
+  },
+  {
+    "username": "vijayendran_12",
+    "password": "$2a$10$FS8ZsQu5TYhsoAT7bqvU8O/Zu8aowdp1EIYVkqhzTfi58zQGJAX6u",
+    "email": "vijayendrangk@gmail.com",
+    "role": "player",
+    "batchYear": 2012,
+    "displayName": "Vijayendran"
+  },
+  {
+    "username": "hariharasudhan_12",
+    "password": "$2a$10$rWeWTjM1t.yaHSidPmBTEeFKlPaTExD9BOb1cWUX1lX/PIPdvrYsu",
+    "email": "sudhahariharasudhan@gmail.com",
+    "role": "player",
+    "batchYear": 2012,
+    "displayName": "Hariharasudhan"
+  },
+  {
+    "username": "siva_13",
+    "password": "$2a$10$6ntpy3A7BvetDL8U43U2Meb2dlgU5lm8435o87Bk7tC7imx.YIJ62",
+    "email": "sivanarayannn@gmail.com",
+    "role": "player",
+    "batchYear": 2013,
+    "displayName": "Siva"
+  },
+  {
+    "username": "prem_13",
+    "password": "$2a$10$nkZL1w1pT2jdiIwkh6mjt.fNzq59jgaKn2M4UeTaLEv/SyGoLo5gW",
+    "email": "Premkumar22ece@gmail.com",
+    "role": "player",
+    "batchYear": 2013,
+    "displayName": "Prem"
+  },
+  {
+    "username": "aravinthakumar_13",
+    "password": "$2a$10$SCX3FtTnYNcz2PIpGdmYUOtvIMeySasyjq9XT3kcAq6c7Xvcw1CMS",
+    "email": "kumararavinth020@gmail.com",
+    "role": "player",
+    "batchYear": 2013,
+    "displayName": "Aravinth"
+  },
+  {
+    "username": "rajavel_13",
+    "password": "$2a$10$WwwVI/EMHW9kswEVWvLul.v/pXMSbI9lLwxd4RWNdTKntRv6LzhVe",
+    "email": "mrsvel7@gmail.com",
+    "role": "player",
+    "batchYear": 2013,
+    "displayName": "Rajavel"
+  },
+  {
+    "username": "alex_13",
+    "password": "$2a$10$rP2O.P4bGqgtFPPXPJ4T6uhmygKBP3dWL6LuVZw4NhwhY5sxG57Ze",
+    "email": "tcealex@gmail.com",
+    "role": "player",
+    "batchYear": 2013,
+    "displayName": "Alex"
+  },
+  {
+    "username": "muthu_alagappan_13",
+    "password": "$2a$10$b5Up4tIT0z6caVUSF/HueeFTyO1yFAhggM1NYTEUwk87j1LAfteJ2",
+    "email": "muthalagappan.n@gmail.com",
+    "role": "player",
+    "batchYear": 2013,
+    "displayName": "Muthu Alagappan"
+  },
+  {
+    "username": "vigneshwaran_14",
+    "password": "$2a$10$z1UcX5fDDxaOXLM7EaMn3uXSMG.zKYOx1Bxnq9S4tln0uWmrHZUBa",
+    "email": "vigneshmechtce@gmail.com",
+    "role": "player",
+    "batchYear": 2014,
+    "displayName": "Vignesh"
+  },
+  {
+    "username": "vijayan_14",
+    "password": "$2a$10$JB67Ox3qIZpxIZoCOvxJP.yvWN0APSGzGK2tmJyBBwN27/JUzTOgK",
+    "email": "vijayan1993@gmail.com",
+    "role": "player",
+    "batchYear": 2014,
+    "displayName": "Vijayan"
+  },
+  {
+    "username": "aravindh_prasad_14",
+    "password": "$2a$10$AgvFjV/3yMztUffjAtkwneFE2gx6yuNv6MLjnpFtqz4HO0Dy/DByS",
+    "email": "arvindprasadtce@gmail.com",
+    "role": "player",
+    "batchYear": 2014,
+    "displayName": "Aravinth Prasadth"
+  },
+  {
+    "username": "durga_prasad_14",
+    "password": "$2a$10$4dqzs9DTIfHqnxggH32K9eyaSJ4i8SmWNvN86/Pilgv6tooUedb9i",
+    "email": "prasad.durga025@gmail.com",
+    "role": "player",
+    "batchYear": 2014,
+    "displayName": "Durga Prasadh"
+  },
+  {
+    "username": "aravindhan_14",
+    "password": "$2a$10$69/AYpawsd2jSmEwe61MOekED/.By5.XZ/Hb0OJw74TmEZrIfCBR6",
+    "email": "Aravindhan443@gmail.com",
+    "role": "player",
+    "batchYear": 2014,
+    "displayName": "Aravinthan"
+  },
+  {
+    "username": "vinoth_kanna_14",
+    "password": "$2a$10$DVjdFj5XXIaL5W6YvJIBzes9/qoAHgQb6E6YsdIM/uhiIsNbEvrYW",
+    "email": "prpvinothkanna@gmail.com",
+    "role": "player",
+    "batchYear": 2014,
+    "displayName": "Vinoth"
+  },
+  {
+    "username": "srinivasan_15",
+    "password": "$2a$10$ysW1M5NxfWph7NFyiU9P2emk1lf1gkhq2aWZn9TzVWFvyLGRg84Fm",
+    "email": "frisksri@gmail.com",
+    "role": "player",
+    "batchYear": 2015,
+    "displayName": "Sreeni"
+  },
+  {
+    "username": "ameesh_15",
+    "password": "$2a$10$ajUpd2W/cqVUUfarpdz4/OUBnqJblUKau/XYpWIfyq9KJ2BkLDG3a",
+    "email": "ameeshsrinivasan@gmail.com",
+    "role": "player",
+    "batchYear": 2015,
+    "displayName": "Ameesh"
+  },
+  {
+    "username": "karthi_15",
+    "password": "$2a$10$.bFjbdyL4F32e0SYZUxO3etJw3lkCewXc5TKY5wsTXzZjiXYBmJTC",
+    "email": "Karthiktvnk@gmail.com",
+    "role": "player",
+    "batchYear": 2015,
+    "displayName": "Karthi"
+  },
+  {
+    "username": "senthilkumar_15",
+    "password": "$2a$10$g64cT0u.tujVRX0zYHS5gOb5bgpp6pC5WdbqeI5sriaizwjMPElBC",
+    "email": "ktsenthil2012@gmail.com",
+    "role": "player",
+    "batchYear": 2015,
+    "displayName": "Senthil"
+  },
+  {
+    "username": "premkumar_15",
+    "password": "$2a$10$APSavHrJU3Ncw0eAel1wQ.rNgIknGvwnv3FjFiFCue7Wvh.U8Gb7u",
+    "email": "premkumar116012@gmail.com",
+    "role": "player",
+    "batchYear": 2015,
+    "displayName": "Prem Kumar"
+  },
+  {
+    "username": "blessto_15",
+    "password": "$2a$10$8zNcBmtyeWcCgijOTl7fA.bcVe6TRi/vB31HNAoi2IdbnmfbQTWS6",
+    "email": "bblessto@gmail.com",
+    "role": "player",
+    "batchYear": 2015,
+    "displayName": "Blessto"
+  },
+  {
+    "username": "dhineshkumar_16",
+    "password": "$2a$10$ABfjQUExmxImjanGvtn7/.1v6LW9SgiuHPosatxvYYNkKjDGbC.Ze",
+    "email": "dineshjagan005@gmail.com",
+    "role": "player",
+    "batchYear": 2016,
+    "displayName": "Dhinesh"
+  },
+  {
+    "username": "sugumar_16",
+    "password": "$2a$10$U4TEFxcLlidheZq88dUHKO1gi5/XtLTLz2obAo9c/2jorXgFyDsW.",
+    "email": "sugumarsurya83@gmail.com",
+    "role": "player",
+    "batchYear": 2016,
+    "displayName": "Sugumar"
+  },
+  {
+    "username": "mugilan_16",
+    "password": "$2a$10$abfZe2Tpju1dAnnjTotkeOAgsm6bNY/l7l.oN62PejWP1CXuYlrH6",
+    "email": "sampathmukil@gmail.com",
+    "role": "player",
+    "batchYear": 2016,
+    "displayName": "Mugilan"
+  },
+  {
+    "username": "logesh_17",
+    "password": "$2a$10$L1/lrzSG2gVeTbxsueCOzuWGhrnH90xZeVmbRg5FxyFTfWRtA9N/.",
+    "email": "gjayavarsan@gmail.com",
+    "role": "player",
+    "batchYear": 2017,
+    "displayName": "Logesh"
+  },
+  {
+    "username": "puvi_17",
+    "password": "$2a$10$3kSwqkyyWHFOxsFJVGSoXu0Dr.VmuqmyLL5zjpFnys2oLS3LFiGXq",
+    "email": "puviyarasuvelu@gmail.com",
+    "role": "player",
+    "batchYear": 2017,
+    "displayName": "Puvi"
+  },
+  {
+    "username": "naveen_17",
+    "password": "$2a$10$niLmVO0kI5iQ0VaC4ezO8eSdg7ZbmrrslEdAH4ARZMWXNDzKD2ggS",
+    "email": "v.naveenkvp@gmail.com",
+    "role": "player",
+    "batchYear": 2017,
+    "displayName": "Naveen"
+  },
+  {
+    "username": "godwin_17",
+    "password": "$2a$10$y7c.Yfip78dh.CaQVf64Te1NgjBM5AEET2RmukaCbUtUOk5/hl5cG",
+    "email": "godwinkennady96@gmail.com",
+    "role": "player",
+    "batchYear": 2017,
+    "displayName": "Godwin"
+  },
+  {
+    "username": "seetha_17",
+    "password": "$2a$10$CaJE.AxSeiVQ3M1uO/PC7O7X2wYb4Jl8PRBNDVsHNufpoSNsdOA.y",
+    "email": "ram07.it@gmail.com",
+    "role": "player",
+    "batchYear": 2017,
+    "displayName": "Seetha"
+  },
+  {
+    "username": "kumaresan_17",
+    "password": "$2a$10$02MGuCcAn84OreIMo5iJwORvUtuElCBE8CPqNcyRZ7dHkVASMKywi",
+    "email": "kumaresantceit@gmail.com",
+    "role": "player",
+    "batchYear": 2017,
+    "displayName": "Kumaresan"
+  },
+  {
+    "username": "praveen_17",
+    "password": "$2a$10$n.y3skc5OJwEl9mLyx6uteh4EAIpMHcyWTGzUveaDi4tW5Bn8mRyi",
+    "email": "praveenfromtce@gmail.com",
+    "role": "player",
+    "batchYear": 2017,
+    "displayName": "Praveen"
+  },
+  {
+    "username": "vignesh_perumal_18",
+    "password": "$2a$10$RCXJf13Y82MkVfbjhDzg9uHwFQtlEI/Xrerxm7DzBc6EKe7FSsjw2",
+    "email": "vigneshperumal86@gmail.com",
+    "role": "player",
+    "batchYear": 2018,
+    "displayName": "Vicky"
+  },
+  {
+    "username": "antony_raj_18",
+    "password": "$2a$10$2UM/Hv4EdL0PlCzXFgQddODKAQ77PjCG6XesjwC2MQKDEYDj8We9q",
+    "email": "antony1981996@gmail.com",
+    "role": "player",
+    "batchYear": 2018,
+    "displayName": "Antony"
+  },
+  {
+    "username": "tamilselvan_18",
+    "password": "$2a$10$lLb0BaDNNaImli8zqapmoOPZ8p236ldGlQi/3S0h2fv44Ts9OwG1W",
+    "email": "sachintamil108@gmail.com",
+    "role": "player",
+    "batchYear": 2018,
+    "displayName": "Tamil"
+  },
+  {
+    "username": "hariharan_18",
+    "password": "$2a$10$V9JSSddHqIGbj5G8fw2DM.DakjWhRA0EKvAACCo8l3ifvYR6APhwe",
+    "email": "harisolai@gmail.com",
+    "role": "player",
+    "batchYear": 2018,
+    "displayName": "Hari"
+  },
+  {
+    "username": "rahman_18",
+    "password": "$2a$10$meHftUraZ3UkOmPGviZJveixtoYdHHMIAuaN4/xVTNjYkFZY0JC/W",
+    "email": "fazulur8@gmail.com",
+    "role": "player",
+    "batchYear": 2018,
+    "displayName": "Rahman"
+  },
+  {
+    "username": "avinash_19",
+    "password": "$2a$10$N6.VjLhqAhMhAu124ImrFugEY6XC16DpmExEL97ljXr7zK6LRrsae",
+    "email": "avinashdurairajan@gmail.com",
+    "role": "player",
+    "batchYear": 2019,
+    "displayName": "Avinash"
+  },
+  {
+    "username": "ananth_19",
+    "password": "$2a$10$6TmwzczUfFfc.zORnL8kreBxiM59vS5AaaFDS4FudTS.4kKsIYNES",
+    "email": "anandhstanlyjohnson@gmail.com",
+    "role": "player",
+    "batchYear": 2019,
+    "displayName": "Aanath"
+  },
+  {
+    "username": "vijay_19",
+    "password": "$2a$10$H6xQU2nSrTyxnI0KVdcLSu1F7YS6m49X8ATZDR5EZwMyP/59YJxEi",
+    "email": "vijay1998boopathi@gmail.com",
+    "role": "player",
+    "batchYear": 2019,
+    "displayName": "Vijay"
+  },
+  {
+    "username": "bala_harish_19",
+    "password": "$2a$10$houQR.eWRLaCWQOXUUtjNO1LOAO2.lC2QlrDZov/unFOlvDqG.wtC",
+    "email": "balaharish777@gmail.com",
+    "role": "player",
+    "batchYear": 2019,
+    "displayName": "Bala Haraish"
+  },
+  {
+    "username": "praveen_19",
+    "password": "$2a$10$RiebPJWBSRJLDLa1hJzB4ejxOeOmYk7NxJm42kGSc2AoL3RPQrwpy",
+    "email": "sspraveen1997@gmail.com",
+    "role": "player",
+    "batchYear": 2019,
+    "displayName": "Praveen"
+  },
+  {
+    "username": "mani_19",
+    "password": "$2a$10$KOnG6B1h7PjJlZhrbmcm0uW3SwLpkqMfHKzHsLQ3uK4nuC69qzyOG",
+    "email": "manirakshithrm@gmail.com",
+    "role": "player",
+    "batchYear": 2019,
+    "displayName": "Mani"
+  },
+  {
+    "username": "siva_ramkumar_20",
+    "password": "$2a$10$xHy1Go8wcKFIEzzNUg1HgeuvOhHvSMp.g8DcV/S8XGNDnFxsd5r/m",
+    "email": "sivaramkumara1999@gmail.com",
+    "role": "player",
+    "batchYear": 2020,
+    "displayName": "Siva"
+  },
+  {
+    "username": "bharathan_20",
+    "password": "$2a$10$1g9jTVQ6yUdwv8WXMFN8uOx5kO0xc.GEUpClNM97OhSOmNC9PppJi",
+    "email": "vbharathan1999@gmail.com",
+    "role": "player",
+    "batchYear": 2020,
+    "displayName": "Bharathan"
+  },
+  {
+    "username": "ashokamannan_20",
+    "password": "$2a$10$EZelToWqMV4L0gyjNaHATuWz7x7rUsn7t0HCR4/OkLe4sZm9EilPu",
+    "email": "ashokamannan@gmail.com",
+    "role": "player",
+    "batchYear": 2020,
+    "displayName": "Ashok"
+  },
+  {
+    "username": "jagadeeshan_20",
+    "password": "$2a$10$njfyrNS7Z.V9JNBC/LT8DubElwaJTKXJ1a452FZoSndo84kx.5eni",
+    "email": "jjegadeesh98@gmail.com",
+    "role": "player",
+    "batchYear": 2020,
+    "displayName": "Jagadheesh"
+  },
+  {
+    "username": "harikrishna_20",
+    "password": "$2a$10$q8HSdyrKGUheOHMrNa98ZOBZIJD1cLf.fDDh6Aoyk17Cf8QcW5arG",
+    "email": "vnhari98@gmail.com",
+    "role": "player",
+    "batchYear": 2020,
+    "displayName": "Hari"
+  },
+  {
+    "username": "saravana_kumar_20",
+    "password": "$2a$10$8LgOeCz.juYcZ0plHlk9KeQzdaSCCr.LBPb2nEcDCsi7aPBC4bcNm",
+    "email": "saravanasampath554@gmail.com",
+    "role": "player",
+    "batchYear": 2020,
+    "displayName": "Saravana"
+  },
+  {
+    "username": "mayil_raj_21",
+    "password": "$2a$10$yOvawvnM7CZl8Vmx/7c1duWe7vwXLBGq/BSGvRRx3qTqYLPnad6pi",
+    "email": "mayilsmpselvam@gmail.com",
+    "role": "player",
+    "batchYear": 2021,
+    "displayName": "Mayil Raj"
+  },
+  {
+    "username": "ram_prasanth_21",
+    "password": "$2a$10$jr50EcukOsmylj9Hj3MmCOwyAsNNcZik6PPyB3aPV6Tq0XE/ndrVy",
+    "email": "ramprasanthram312@gmail.com",
+    "role": "player",
+    "batchYear": 2021,
+    "displayName": "Ram Prasanth"
+  },
+  {
+    "username": "pradeep_kumar_21",
+    "password": "$2a$10$Ng7/zUXZO233JkRzKEH1gOqAs2GGxntvi8dK9rsUC.U4wf7E9HVt6",
+    "email": "pradeepkumar44683@gmail.com",
+    "role": "player",
+    "batchYear": 2021,
+    "displayName": "Pradeep Kumar"
+  },
+  {
+    "username": "vigneshwaran_21",
+    "password": "$2a$10$GLm/APWkHPQSYuFOVXE27.panPLNH4ZQiAbbElSgh5qPWGiYsRqcu",
+    "email": "vigneshwaranvw493@gmail.com",
+    "role": "player",
+    "batchYear": 2021,
+    "displayName": "Vignesh"
+  },
+  {
+    "username": "karthikeyan_21",
+    "password": "$2a$10$zK5rVRfp0plexJZq1vATrublrBNXEXaCjPL54Sizr8b5HEhfIYH.2",
+    "email": "karthipandarinathan@gmail.com",
+    "role": "player",
+    "batchYear": 2021,
+    "displayName": "Karthikeyan"
+  },
+  {
+    "username": "udhaya_kumar_21",
+    "password": "$2a$10$nruagHxy94BBJ.64ND0BrOKR.vFC0DWpphhL2AKiwhQLK.ZJYDMsa",
+    "email": "udhayakumarthiagaajar@gmail.com",
+    "role": "player",
+    "batchYear": 2021,
+    "displayName": "Udhaya Kumar"
+  },
+  {
+    "username": "warun_kumar_21",
+    "password": "$2a$10$3IM0BrHcGUIPzOD.bgMvWu4jHFHus.S17hsrTbA7VCa.tud29OqZ.",
+    "email": "warunkumarb@gmail.com",
+    "role": "player",
+    "batchYear": 2021,
+    "displayName": "Waran Kumar"
+  },
+  {
+    "username": "keerthinathan_21",
+    "password": "$2a$10$O2mnGKDYw8.uvkm6Y/aacOEIgp7SeW03F9z/I2rm4Kfqvb9tDJb8e",
+    "email": "jkeerthinathan@gmail.com",
+    "role": "player",
+    "batchYear": 2021,
+    "displayName": "Keerthinathan"
+  },
+  {
+    "username": "arun_karthick_22",
+    "password": "$2a$10$nNJMnPwfx8VPLZfXVkYGweSz/bbfEDpKw078DYZpOBb1MX7dD3l.K",
+    "email": "arunmuthuraman0407@gmail.com",
+    "role": "player",
+    "batchYear": 2022,
+    "displayName": "Arun"
+  },
+  {
+    "username": "ramkumar_22",
+    "password": "$2a$10$N0lBpzI8K/nCsrNnbJoWlO2DtQGPZy.LTUo.6BNbpL7qMxr66OC2C",
+    "email": "ramkumarp133@gmail.com",
+    "role": "player",
+    "batchYear": 2022,
+    "displayName": "Ramkumar"
+  },
+  {
+    "username": "anbumani_22",
+    "password": "$2a$10$57WZwwFKg2WtU7Ekw.AnC.iWJL2Q5ap61.BlMcvCMz8F6aT8zAOuK",
+    "email": "tanbumani1402@gmail.com",
+    "role": "player",
+    "batchYear": 2022,
+    "displayName": "Anbumani"
+  },
+  {
+    "username": "dharbanesh_22",
+    "password": "$2a$10$S13JYIe8iB1hw/nmeg5rPO.ytY1jlpe8i.b7GSkKb1MWqPW0olJTO",
+    "email": "dharbanesh22@gmail.com",
+    "role": "player",
+    "batchYear": 2022,
+    "displayName": "Dharbanesh"
+  },
+  {
+    "username": "kathir_aadhiseshan_22",
+    "password": "$2a$10$kb46Dk4Xz1wT4GmuBhX20ueyRjXw3VFXNc4pHxF.fqdysUcaZmdxq",
+    "email": "kathiraadhiseshan@gmail.com",
+    "role": "player",
+    "batchYear": 2022,
+    "displayName": "Kathir"
+  },
+  {
+    "username": "prasanth_23",
+    "password": "$2a$10$pcGCM1RQ8jDsgtUGKjtAO.Ywfd5EULq2aaA4vleJwJejUdAtGQicW",
+    "email": "jkprasanthbe@gmail.com",
+    "role": "player",
+    "batchYear": 2023,
+    "displayName": "Prashanth"
+  },
+  {
+    "username": "hari_hara_priyan_23",
+    "password": "$2a$10$08T1u.R0IrYwbFU0DBOQMeOZZCtak33mZWl1lBb8q4np7YJPIqXd6",
+    "email": "hariharapriyans@gmail.com",
+    "role": "player",
+    "batchYear": 2023,
+    "displayName": "Hari Hara Priyan"
+  },
+  {
+    "username": "surya_23",
+    "password": "$2a$10$Pp/pue4Jw6QDl3R2/CRY/.LsbzMTTEfN.JD3KnEY4CTWlp3c6jiKy",
+    "email": "suryajm001@gmail.com",
+    "role": "player",
+    "batchYear": 2023,
+    "displayName": "Surya"
+  },
+  {
+    "username": "ashin_glads_mon_23",
+    "password": "$2a$10$8emhCAxC6916BIo0SEilT.Ed/Vh.gjum6NG0ByaR8Xss/9iWRUBqu",
+    "email": "aashinmechon@gmail.com",
+    "role": "player",
+    "batchYear": 2023,
+    "displayName": "Ashin"
+  },
+  {
+    "username": "vignesh_kumar_23",
+    "password": "$2a$10$qeT2qftuZDow.Z.mlh3s2e/HfsLazHKynxZ45tiKfLMI78tZNwY86",
+    "email": "vigneshkumarr1612@gmail.com",
+    "role": "player",
+    "batchYear": 2023,
+    "displayName": "Vignesh"
+  },
+  {
+    "username": "mohan_23",
+    "password": "$2a$10$n4v5.PNOFm13c4yA.fM0yuUySNo2RgA/TDtB9PRmqOeuh/pQiFyJW",
+    "email": "tirupathimohan8@gmail.com",
+    "role": "player",
+    "batchYear": 2023,
+    "displayName": "Mohan"
+  },
+  {
+    "username": "kishore_kumar_23",
+    "password": "$2a$10$FmwfPQLa6S714CK9EIy13.JIZ.QaG5E8apdaz15z5nS7O8LUuYew2",
+    "email": "Kishore2002kumaar@gmail.com",
+    "role": "player",
+    "batchYear": 2023,
+    "displayName": "Kishore"
+  },
+  {
+    "username": "murali_manohar_23",
+    "password": "$2a$10$wZJOPmOYuxJOX4VK625squFrRAcfvtWA2pkZsSOtKblwKogolrQRi",
+    "email": "muralemanoharm@gmail.com",
+    "role": "player",
+    "batchYear": 2023,
+    "displayName": "Murali Manohar"
+  },
+  {
+    "username": "logeshwaran_23",
+    "password": "$2a$10$erA1P/ROWyWWSK5uApEQI.KSUqiXtefSMQ3zt6V02PljYUUSYxVFy",
+    "email": "logeshwaran.r.ds@gmail.com",
+    "role": "player",
+    "batchYear": 2023,
+    "displayName": "Logesh"
+  },
+  {
+    "username": "hemachandran_24",
+    "password": "$2a$10$OMGZ7iT7ZyN9zbcmuPoCTeCEli3OIITVqfOhWJNdEojZYO0ZjH1DS",
+    "email": "hemuragu498@gmail.com",
+    "role": "player",
+    "batchYear": 2024,
+    "displayName": "Hemachandran"
+  },
+  {
+    "username": "ram_sabarish_24",
+    "password": "$2a$10$4vQC7bvuPdqM1B5dfg2..OK5n5VRTU4lurx5jn4BPDHf0MiJgENBK",
+    "email": "jkrramsabarish@gmail.com",
+    "role": "player",
+    "batchYear": 2024,
+    "displayName": "Ram Sabarish"
+  },
+  {
+    "username": "mvsraja_24",
+    "password": "$2a$10$jMGASNeQAkXO/YRChL2CSuYiasUSADl8LynY4oS1ttov6VgMONDBG",
+    "email": "mvsrajaofficial@gmail.com",
+    "role": "player",
+    "batchYear": 2024,
+    "displayName": "Mvs Raja"
+  },
+  {
+    "username": "varun_25",
+    "password": "$2a$10$0QBhOQJ2FlTx6A3Pgo66oOL.yIKZvgzjMIK4.Mz5IENho4TDbbF.C",
+    "email": "subavarun129@gmail.com",
+    "role": "player",
+    "batchYear": 2025,
+    "displayName": "Varun"
+  },
+  {
+    "username": "hemachandran_25",
+    "password": "$2a$10$H.GLOzebFJTBXlI8w/1Ogu394MIav8gVMwdUHUGK.WEp.h5WGlTay",
+    "email": "gmhemanth2003@gmail.com",
+    "role": "player",
+    "batchYear": 2025,
+    "displayName": "Hemachandran G M"
+  },
+  {
+    "username": "thanus_karthick_25",
+    "password": "$2a$10$eo.ixtsXPhJansxGMILC1OfYZqXCvbEgSpLQiC0/6lTqs/IeLXANi",
+    "email": "thanuskarthik.gb@gmail.com",
+    "role": "player",
+    "batchYear": 2025,
+    "displayName": "Thanus"
+  },
+  {
+    "username": "aswin_25",
+    "password": "$2a$10$bTamCePoXAf3POMWmBXdhu70bArIlngHVuaQKQlEzQFmYA5CDMkfi",
+    "email": "aswinmayakkannu@gmail.com",
+    "role": "player",
+    "batchYear": 2025,
+    "displayName": "Aswin"
+  },
+  {
+    "username": "sanjay_nithish_25",
+    "password": "$2a$10$M/2Ev/r7gYrXHcVN/6E22e2QbxsyBSOewEznrt8OezWWA1F4u9yBC",
+    "email": "sanjay24112003@gmail.com",
+    "role": "player",
+    "batchYear": 2025,
+    "displayName": "Sanjay"
+  },
+  {
+    "username": "sampath_26",
+    "password": "$2a$10$hSYkChvXFhYFsvIGupNbD.l/y0/SM8Ej5zUuWH9htdOKIQ1F4pcii",
+    "email": "sampathvq2k26@gmail.com",
+    "role": "player",
+    "batchYear": 2026,
+    "displayName": "Sampath"
+  },
+  {
+    "username": "vignesh_26",
+    "password": "$2a$10$VQ32YX84RN2MddtdKo0HZeoBY5voM/lZhJB03mdJHJwwuZV5s5dXm",
+    "email": "vickykarthi369@gmail.com",
+    "role": "player",
+    "batchYear": 2026,
+    "displayName": "Vignesh"
+  },
+  {
+    "username": "bharani_dharan_26",
+    "password": "$2a$10$0snGOmD6eC/FSaZQF2izxOKY1w0B/tFzRPevXE3m8w5NOGUHTGdse",
+    "email": "bharanitvm2004@gmail.com",
+    "role": "player",
+    "batchYear": 2026,
+    "displayName": "Bharani"
+  },
+  {
+    "username": "jenson_26",
+    "password": "$2a$10$fRTsvjpwYMVLy8ru6DVNMOzqkN1WtQ4bjyd/wFNiHVL3NfeLMcMc.",
+    "email": "jensonjenson779@gmail.com",
+    "role": "player",
+    "batchYear": 2026,
+    "displayName": "Jenson"
+  },
+  {
+    "username": "rajesh_kumar_27",
+    "password": "$2a$10$pjE/sgnlpLVHyL/yD2mVHuWRyCa6WmzMy1cg2PTd0eEmei4xyyDq2",
+    "email": "garajeshkumar2005@gmail.com",
+    "role": "player",
+    "batchYear": 2027,
+    "displayName": "Rajesh"
+  },
+  {
+    "username": "muthu_27",
+    "password": "$2a$10$UsP.P9Mtt4xwF8yV5YvhTe6CB8AtDsVTbXloYnuRCIszbVE53.9WG",
+    "email": "muthusivanesan2005@gmail.com",
+    "role": "player",
+    "batchYear": 2027,
+    "displayName": "Muthu"
+  },
+  {
+    "username": "naveen_27",
+    "password": "$2a$10$uyTL4waRQyH57nxPx2Ik9.WchXfQ2qQqui.vHLnC6swCtExYV6Doi",
+    "email": "udhayanaveen000@gmail.com",
+    "role": "player",
+    "batchYear": 2027,
+    "displayName": "Naveen"
+  },
+  {
+    "username": "chandru_27",
+    "password": "$2a$10$/2U7mWeXdaszafbzBWLU2.qmC6/nFOBdh6tqpft.Wt1RcH9leC41O",
+    "email": "chandru637937@gmail.com",
+    "role": "player",
+    "batchYear": 2027,
+    "displayName": "Chandru"
+  },
+  {
+    "username": "kasi_annamalai_28",
+    "password": "$2a$10$GhP3mb2kWJCLTEM10XdzvuGoLd.ugrniQtLc7YJuONCtMyNFbTjRW",
+    "email": "annamalaikasi2@gmail.com",
+    "role": "player",
+    "batchYear": 2028,
+    "displayName": "Kasi Annamalai"
+  },
+  {
+    "username": "kannan_28",
+    "password": "$2a$10$Rb5Yr.abkfEep6wy8XwTke5wNDf6cRSveW/5Dbq5CeTkVkyuUddIu",
+    "email": "dgkannan2007@gmail.com",
+    "role": "player",
+    "batchYear": 2028,
+    "displayName": "Kannan"
+  },
+  {
+    "username": "santhosh_28",
+    "password": "$2a$10$/aOvBI.EnmcOLqFO0KHToe1eBLAYNJ7T.n7U8TePGpsQV0raQcyY6",
+    "email": "santhosh220671@gmail.com",
+    "role": "player",
+    "batchYear": 2028,
+    "displayName": "Santhosh"
+  },
+  {
+    "username": "ganapathy_sundar_28",
+    "password": "$2a$10$WvABh65Dmn3JV9.h2KC/ROEtEMg9KyMk0OJAEPp65SPiI2IJaz3iK",
+    "email": "ganapathyramasamy2006@gmail.com",
+    "role": "player",
+    "batchYear": 2028,
+    "displayName": "Ganapathy"
+  },
+  {
+    "username": "sriram_28",
+    "password": "$2a$10$ymGxxf8vqZo5.ic6jRuJZOJBat3HoA45FEmiL.Vt2/Ro07CZLf6fS",
+    "email": "jksriramsundar27052007@gmail.com",
+    "role": "player",
+    "batchYear": 2028,
+    "displayName": "Sriram"
+  },
+  {
+    "username": "navaneesh_28",
+    "password": "$2a$10$jFCyQn/jSjaGRnBdqCrF5ucEHRhsfeU3TTwNCzrTgTcaMy4Pxqn6u",
+    "email": "navaneesh2006@gmail.com",
+    "role": "player",
+    "batchYear": 2028,
+    "displayName": "Navaneesh"
+  },
+  {
+    "username": "somesh_29",
+    "password": "$2a$10$33F4//tHyX49XS5r5r7Nqu/5BwYOCWV1rp3e.A0Pu1x/.J4v.TBCa",
+    "email": "someshrp17@gmail.com",
+    "role": "player",
+    "batchYear": 2029,
+    "displayName": "Somesh"
+  },
+  {
+    "username": "ramakrishnan_29",
+    "password": "$2a$10$RBOwyy9.wpZ4EcZwtBWCiemDmSG2PwBbAA7JCOpjjEgwlucaDSTbG",
+    "email": "rasigaranr147@gmail.com",
+    "role": "player",
+    "batchYear": 2029,
+    "displayName": "Ramakrishnan"
+  },
+  {
+    "username": "dhavamani_29",
+    "password": "$2a$10$Q3fHS0s8paW.v2.YbcwcaevrAtvZswZURM3hFCRiHSp2S70slKUPC",
+    "email": "dhavamanichinnasamy2008@gmail.com",
+    "role": "player",
+    "batchYear": 2029,
+    "displayName": "Dhavamani"
+  },
+  {
+    "username": "sakthi_29",
+    "password": "$2a$10$AJQlTkZ4ph6870HN60XytegoPPcxsr0l21Hx8DlMyKPt1AG1xyxse",
+    "email": "sakthi301226@gmail.com",
+    "role": "player",
+    "batchYear": 2029,
+    "displayName": "Sakthi"
+  },
+  {
+    "username": "Bala_29",
+    "password": "$2a$10$dkyPi26qmrQrYu9AuYpX.eJ.1mHaA.6KWIfzgFvx/vC/tDn/vFIFS",
+    "email": "",
+    "role": "player",
+    "batchYear": 2029,
+    "displayName": "Bala Narain"
+  }
+]
