@@ -12,8 +12,7 @@ const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
     folder: 'vanquishers',
-    allowed_formats: ['jpg', 'png', 'jpeg', 'gif', 'webp', 'mp4', 'mov'],
-    resource_type: 'auto' // Important for supporting both images and videos
+    resource_type: 'auto' 
   }
 });
 
