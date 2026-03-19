@@ -213,6 +213,14 @@ app.post('/api/memories', authenticateToken, async (req, res) => {
 
 app.put('/api/memories/:id', authenticateToken, async (req, res) => {
     try {
+        const memory = await Memory.findById(req.params.id);
+        if (!memory) return res.status(404).json({ error: 'Memory not found' });
+        // Allow: admin OR the original author
+        const isAdmin = req.user.role === 'admin';
+        const isAuthor = memory.author === (req.user.displayName || req.user.username);
+        if (!isAdmin && !isAuthor) {
+            return res.status(403).json({ error: 'Permission denied. You can only edit your own memories.' });
+        }
         const updated = await Memory.findByIdAndUpdate(req.params.id, req.body, { new: true });
         res.json(updated);
     } catch (err) {
@@ -222,6 +230,14 @@ app.put('/api/memories/:id', authenticateToken, async (req, res) => {
 
 app.delete('/api/memories/:id', authenticateToken, async (req, res) => {
     try {
+        const memory = await Memory.findById(req.params.id);
+        if (!memory) return res.status(404).json({ error: 'Memory not found' });
+        // Allow: admin OR the original author
+        const isAdmin = req.user.role === 'admin';
+        const isAuthor = memory.author === (req.user.displayName || req.user.username);
+        if (!isAdmin && !isAuthor) {
+            return res.status(403).json({ error: 'Permission denied. You can only delete your own memories.' });
+        }
         await Memory.findByIdAndDelete(req.params.id);
         res.json({ message: 'Deleted' });
     } catch (err) {

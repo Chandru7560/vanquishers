@@ -48,6 +48,13 @@ const App = {
 
   // ====== Initialize ======
   init() {
+    // Detect and apply system dark/light theme
+    const dark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+      document.documentElement.setAttribute('data-theme', e.matches ? 'dark' : 'light');
+    });
+
     if (!VanquishersData.isLoggedIn()) {
       this.showLogin();
       return;
@@ -446,7 +453,7 @@ const App = {
     return `
       <div class="alumni-card">
         <div class="alumni-photo-container ${canEditPhoto ? 'editable' : ''}" onclick="${canEditPhoto ? `document.getElementById('photoInput_alumni_${a.id}').click()` : ''}">
-          ${a.photo ? `<img src="${a.photo}" class="alumni-photo" />` : `<div class="alumni-avatar">${initials}</div>`}
+          ${a.photo ? `<img src="${a.photo}" class="alumni-photo" loading="lazy" />` : `<div class="alumni-avatar">${initials}</div>`}
           ${canEditPhoto ? `
             <div class="photo-edit-overlay">${this.Icons.camera}</div>
             <input type="file" id="photoInput_alumni_${a.id}" style="display:none" accept="image/*" onchange="App.handlePhotoUpload('alumni', ${a.id}, this)" />
@@ -465,60 +472,66 @@ const App = {
   },
 
   // ====== ALUMNI MEMORIES GALLERY ======
-  renderMemoriesGallery(container) {
-    const memories = VanquishersData.getAllMemories();
+  async renderMemoriesGallery(container) {
+    // Show loading skeleton while fetching
     container.innerHTML = `
       <div class="gallery-wrapper">
         <div class="gallery-toolbar" style="margin-bottom: 24px;">
-           <h2 style="color:#ffffff; display:flex; align-items:center; gap:12px;">
-             ${this.Icons.camera} Memories
-           </h2>
+          <h2 style="color:#ffffff; display:flex; align-items:center; gap:12px;">
+            ${this.Icons.camera} Memories
+          </h2>
         </div>
-        
-        <div class="memories-grid gallery-grid">
-          ${memories.length > 0 ? memories.map(m => this.renderGalleryItem(m)).join('') : `
-            <div class="empty-state">
-              <div class="empty-icon" style="color:#ffffff;">${this.Icons.camera}</div>
-              <p style="color:#ffffff;">No memories uploaded yet. Click the + icon to add!</p>
-            </div>
-          `}
+        <div class="memories-grid gallery-grid" id="memoriesGalleryGrid">
+          <div class="empty-state"><div class="empty-icon" style="color:#ffffff;">${this.Icons.camera}</div><p style="color:#ffffff;">Loading memories...</p></div>
         </div>
-
-        <!-- Floating Action Button (Google Drive Style) -->
+        <!-- Floating Action Button -->
         <div class="fab-container">
           <div class="upload-popup-menu" id="globalUploadMenu">
             <div class="menu-item" onclick="App.triggerGlobalUpload('file')">
               <span class="menu-icon">${this.Icons.file}</span>
               <span>File upload</span>
             </div>
-            <div class="menu-item" onclick="App.showToast('New folder feature coming soon!')">
-              <span class="menu-icon">${this.Icons.plus}</span>
-              <span>New folder</span>
-            </div>
           </div>
           <button class="btn-fab" onclick="App.toggleGlobalUploadMenu()" title="Add New">
-             ${this.Icons.plus}
+            ${this.Icons.plus}
           </button>
           <input type="file" id="globalMemoryInput" multiple accept="image/*,video/*,audio/*" style="display:none" onchange="App.handleGlobalUpload()" />
         </div>
       </div>
     `;
+
+    // Fetch ALL memories from all users — visible to everyone
+    const memories = await VanquishersData.getAllMemories();
+    const grid = document.getElementById('memoriesGalleryGrid');
+    if (!grid) return;
+
+    if (memories.length > 0) {
+      grid.innerHTML = memories.map(m => this.renderGalleryItem(m)).join('');
+    } else {
+      grid.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-icon" style="color:#ffffff;">${this.Icons.camera}</div>
+          <p style="color:#ffffff;">No memories uploaded yet. Click the + button to add!</p>
+        </div>
+      `;
+    }
   },
 
   renderGalleryItem(mem) {
-    const canEdit = VanquishersData.isLoggedIn();
-    const ext = mem.name.split('.').pop().toLowerCase();
+    const currentUser = VanquishersData.getUser();
+    const isAdmin = currentUser.role === 'admin';
+    const isOwner = mem.author && currentUser.user && (mem.author === currentUser.user || mem.author === currentUser.displayName);
+
+    const photoUrl = mem.photo || mem.data;
+    const type = (mem.fileType || '').toLowerCase() || ((mem.name || '').split('.').pop().toLowerCase());
+
+    const isImage = ['png', 'jpg', 'jpeg', 'gif', 'webp', 'heic', 'heif', 'bmp', 'svg'].some(e => type.includes(e));
+    const isVideo = ['mp4', 'mov', 'webm', 'avi', 'mkv', 'm4v'].some(e => type.includes(e));
+    const isAudio = ['mp3', 'm4a', 'aac', 'wav', 'ogg', 'flac'].some(e => type.includes(e));
 
     let preview = '';
-    const photoUrl = mem.photo || mem.data; // Backwards compatibility for now
-    const type = (mem.fileType || '').toLowerCase() || (mem.name.split('.').pop().toLowerCase());
-    
-    const isImage = ['png', 'jpg', 'jpeg', 'gif', 'webp', 'heic', 'heif', 'bmp', 'svg'].some(ext => type.includes(ext));
-    const isVideo = ['mp4', 'mov', 'webm', 'avi', 'mkv', 'm4v'].some(ext => type.includes(ext));
-    const isAudio = ['mp3', 'm4a', 'aac', 'wav', 'ogg', 'flac'].some(ext => type.includes(ext));
-
     if (isImage) {
-      preview = `<img src="${photoUrl}" alt="${mem.name}" class="memory-preview-img" />`;
+      preview = `<img src="${photoUrl}" alt="${mem.name || ''}" class="memory-preview-img" loading="lazy" />`;
     } else if (isVideo) {
       preview = `<video src="${photoUrl}" class="memory-preview-video" preload="metadata"></video><div class="video-overlay">${this.Icons.camera}</div>`;
     } else if (isAudio) {
@@ -527,20 +540,33 @@ const App = {
       preview = `<div class="memory-file-icon">${this.Icons.file}</div>`;
     }
 
+    const memId = mem._id || mem.id;
+    const alumniId = mem.alumniId || 'general';
+
+    // Build action buttons based on role
+    let actionBtns = '';
+    if (isAdmin) {
+      // Admin: full edit + delete on all
+      actionBtns = `
+        <button class="btn btn-secondary btn-small" onclick="event.stopPropagation(); App.editMemory('${alumniId}', '${memId}')" title="Edit">${this.Icons.edit}</button>
+        <button class="btn btn-danger btn-small" onclick="event.stopPropagation(); App.deleteMemory('${alumniId}', '${memId}')" title="Delete">${this.Icons.trash}</button>
+      `;
+    } else if (isOwner) {
+      // Owner: only delete their own
+      actionBtns = `
+        <button class="btn btn-danger btn-small" onclick="event.stopPropagation(); App.deleteMemoryOwn('${alumniId}', '${memId}')" title="Delete your photo">${this.Icons.trash}</button>
+      `;
+    }
+
     return `
-      <div class="memory-item gallery-item" onclick="App.showMemoriesModal('${mem.alumniId}')">
-        <div class="memory-preview" onclick="event.stopPropagation(); App.viewMemoryFullscreen('${mem.alumniId}', '${mem._id || mem.id}')" style="cursor:pointer" title="View Fullscreen">${preview}</div>
+      <div class="memory-item gallery-item">
+        <div class="memory-preview" onclick="App.viewMemoryFullscreen('${alumniId}', '${memId}')" style="cursor:pointer" title="View Fullscreen">${preview}</div>
         <div class="memory-info">
-          <span class="memory-name" title="${mem.name || mem.content}">${(mem.name || mem.content || '').length > 15 ? (mem.name || mem.content).substring(0, 13) + '...' : (mem.name || mem.content)}</span>
+          <span class="memory-name" title="${mem.name || mem.content || ''}">${(mem.name || mem.content || '').length > 15 ? (mem.name || mem.content).substring(0, 13) + '...' : (mem.name || mem.content || '')}</span>
           <span class="memory-author">${mem.author || 'Unknown'}</span>
-          <span class="memory-date">${new Date(mem.addedAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}</span>
+          <span class="memory-date">${mem.addedAt ? new Date(mem.addedAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }) : ''}</span>
         </div>
-        ${canEdit ? `
-        <div class="memory-actions global-actions">
-           <button class="btn btn-secondary btn-small" onclick="event.stopPropagation(); App.editMemory('${mem.alumniId}', '${mem._id || mem.id}')">${this.Icons.edit}</button>
-           <button class="btn btn-danger btn-small" onclick="event.stopPropagation(); App.deleteMemory('${mem.alumniId}', '${mem._id || mem.id}')">${this.Icons.trash}</button>
-        </div>
-        ` : ''}
+        ${actionBtns ? `<div class="memory-actions global-actions">${actionBtns}</div>` : ''}
       </div>
     `;
   },
@@ -560,9 +586,8 @@ const App = {
   handleGlobalUpload() {
     const input = document.getElementById('globalMemoryInput');
     const files = input.files;
-    if (files.length === 0) return;
-
-    // Direct upload to 'general'
+    if (!files || files.length === 0) return;
+    // Upload to 'general' — images visible to all users in Memories page
     this.processMemoryFiles('general', files);
   },
 
@@ -728,21 +753,32 @@ const App = {
   async processMemoryFiles(alumniId, files) {
     let uploadedCount = 0;
     const total = files.length;
-    const author = VanquishersData.getUser().displayName || VanquishersData.getUser().user;
+    const currentUser = VanquishersData.getUser();
+    const author = currentUser.displayName || currentUser.user;
 
     this.showToast(`Uploading ${total} file(s)...`, 'info');
 
     for (const file of Array.from(files)) {
-      if (file.size > 15 * 1024 * 1024) {
-        this.showToast(`${file.name} is too large (max 15MB)`, 'error');
+      // For images: compress to ≤2MB before uploading
+      let uploadFile = file;
+      if (file.type.startsWith('image/')) {
+        this.showToast(`Compressing ${file.name}...`, 'info');
+        try {
+          uploadFile = await this.compressImageToMaxSize(file, 2);
+        } catch (e) {
+          console.warn('Compression failed, uploading original:', e);
+          uploadFile = file;
+        }
+      } else if (file.size > 50 * 1024 * 1024) {
+        this.showToast(`${file.name} is too large (max 50MB for non-images)`, 'error');
         continue;
       }
 
-      const url = await VanquishersData.uploadFile(file);
+      const url = await VanquishersData.uploadFile(uploadFile);
       if (url) {
         const memory = {
           alumniId,
-          content: file.name, // Use name as content
+          content: file.name,
           author: author,
           photo: url,
           name: file.name,
@@ -779,22 +815,46 @@ const App = {
   },
 
   _finishMemoryUpload(alumniId, total) {
-     document.getElementById('memoriesModal')?.remove();
-     this.showMemoriesModal(alumniId);
-     this.showToast(`${total} file(s) uploaded!`);
+    document.getElementById('memoriesModal')?.remove();
+    this.showToast(`${total} file(s) uploaded!`);
+    // Always refresh the main Memories gallery so all users see new images
+    this.navigate('memories');
   },
 
+  // Admin can delete anyone's memory
   async deleteMemory(alumniId, memoryId) {
+    const currentUser = VanquishersData.getUser();
+    if (currentUser.role !== 'admin') {
+      this.showToast('Only admins can use this action', 'error');
+      return;
+    }
     if (confirm('Delete this memory?')) {
-      const memories = await VanquishersData.getAlumniMemories(alumniId);
-      const memory = memories.find(m => (m._id === memoryId || m.id === memoryId));
-      let targetId = memoryId;
-      if (memory?._id) targetId = memory._id;
-
+      const all = VanquishersData.getAll('memories');
+      const mem = all.find(m => (m._id === memoryId || m.id === memoryId));
+      const targetId = mem?._id || memoryId;
       await VanquishersData.removeMemory(targetId);
       document.getElementById('memoriesModal')?.remove();
-      this.showMemoriesModal(alumniId);
       this.showToast('Memory deleted');
+      this.navigate('memories');
+    }
+  },
+
+  // Users can only delete their own memory
+  async deleteMemoryOwn(alumniId, memoryId) {
+    const currentUser = VanquishersData.getUser();
+    const all = VanquishersData.getAll('memories');
+    const mem = all.find(m => (m._id === memoryId || m.id === memoryId));
+    // Verify ownership
+    if (mem && mem.author !== currentUser.user && mem.author !== currentUser.displayName) {
+      this.showToast('You can only delete your own memories', 'error');
+      return;
+    }
+    if (confirm('Delete your memory?')) {
+      const targetId = mem?._id || memoryId;
+      await VanquishersData.removeMemory(targetId);
+      document.getElementById('memoriesModal')?.remove();
+      this.showToast('Memory deleted');
+      this.navigate('memories');
     }
   },
 
@@ -806,14 +866,18 @@ const App = {
   },
 
   async processPhotoFile(type, id, file) {
-    if (file.size > 15 * 1024 * 1024) {
-      this.showToast('Photo is too large (max 15MB)', 'error');
-      return;
+    this.showToast('Compressing & uploading...', 'info');
+
+    let uploadFile = file;
+    if (file.type.startsWith('image/')) {
+      try {
+        uploadFile = await this.compressImageToMaxSize(file, 2);
+      } catch (e) {
+        uploadFile = file;
+      }
     }
 
-    this.showToast('Uploading...', 'info');
-    const url = await VanquishersData.uploadFile(file);
-    
+    const url = await VanquishersData.uploadFile(uploadFile);
     if (url) {
       await VanquishersData.update(type, id, { photo: url });
       this.showToast('Profile photo updated!');
@@ -827,34 +891,63 @@ const App = {
     }
   },
 
-  compressImage(file, callback) {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = (event) => {
-      const img = new Image();
-      img.src = event.target.result;
-      img.onload = () => {
-        const canvas = document.createElement('canvas');
-        const MAX_WIDTH = 1200;
-        let width = img.width;
-        let height = img.height;
+  // ====== SMART IMAGE COMPRESSION ======
+  // Resize to max 1920px, then loop-compress until ≤ maxMB.
+  // Returns a File object ready for upload.
+  compressImageToMaxSize(file, maxMB = 2) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onerror = reject;
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onerror = reject;
+        img.src = e.target.result;
+        img.onload = () => {
+          const MAX_DIM = 1920;
+          let { width, height } = img;
 
-        if (width > MAX_WIDTH) {
-          height = Math.round((height * MAX_WIDTH) / width);
-          width = MAX_WIDTH;
-        }
+          // Step 1: Resize if too large
+          if (width > MAX_DIM || height > MAX_DIM) {
+            if (width > height) {
+              height = Math.round((height * MAX_DIM) / width);
+              width = MAX_DIM;
+            } else {
+              width = Math.round((width * MAX_DIM) / height);
+              height = MAX_DIM;
+            }
+          }
 
-        canvas.width = width;
-        canvas.height = height;
+          const canvas = document.createElement('canvas');
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          // White background for transparency (PNG→JPEG)
+          ctx.fillStyle = '#ffffff';
+          ctx.fillRect(0, 0, width, height);
+          ctx.drawImage(img, 0, 0, width, height);
 
-        const ctx = canvas.getContext('2d');
-        ctx.drawImage(img, 0, 0, width, height);
-
-        // Compress to JPEG with 0.7 quality
-        const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
-        callback(dataUrl);
+          // Step 2: Adaptive quality loop until ≤ maxMB
+          const maxBytes = maxMB * 1024 * 1024;
+          let quality = 0.92;
+          const tryCompress = () => {
+            canvas.toBlob((blob) => {
+              if (!blob) { reject(new Error('Canvas toBlob failed')); return; }
+              console.log(`[Compress] quality=${quality.toFixed(2)} size=${(blob.size/1024/1024).toFixed(2)}MB`);
+              if (blob.size <= maxBytes || quality <= 0.20) {
+                // Done — wrap blob as File
+                const compressed = new File([blob], file.name.replace(/\.[^.]+$/, '.jpg'), { type: 'image/jpeg' });
+                resolve(compressed);
+              } else {
+                quality = Math.max(0.20, quality - 0.07);
+                tryCompress();
+              }
+            }, 'image/jpeg', quality);
+          };
+          tryCompress();
+        };
       };
-    };
+    });
   },
 
   filterAlumni() {
@@ -975,7 +1068,7 @@ const App = {
     return `
       <div class="player-card" data-name="${p.name.toLowerCase()}" data-pos="${p.position.toLowerCase()}">
         <div class="player-photo-container ${canEditPhoto ? 'editable' : ''}" onclick="${canEditPhoto ? `document.getElementById('photoInput_player_${p.id}').click()` : ''}">
-          ${p.photo ? `<img src="${p.photo}" class="player-photo" />` : `<div class="player-avatar">${initials}</div>`}
+          ${p.photo ? `<img src="${p.photo}" class="player-photo" loading="lazy" />` : `<div class="player-avatar">${initials}</div>`}
           ${canEditPhoto ? `
             <div class="photo-edit-overlay">${this.Icons.camera}</div>
             <input type="file" id="photoInput_player_${p.id}" style="display:none" accept="image/*" onchange="App.handlePhotoUpload('players', ${p.id}, this)" />
