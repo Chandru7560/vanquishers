@@ -1009,7 +1009,7 @@ const App = {
     overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.remove(); });
   },
 
-  saveAlumni(id) {
+  async saveAlumni(id) {
     const name = document.getElementById('alumniName').value.trim();
     const batchYear = parseInt(document.getElementById('alumniBatch').value);
     const photo = document.getElementById('alumniPhoto').value.trim();
@@ -1019,20 +1019,20 @@ const App = {
     if (!name || !batchYear) { this.showToast('Please fill all required fields', 'error'); return; }
 
     if (id) {
-      VanquishersData.update('alumni', id, { name, batchYear, position, achievements, photo });
+      await VanquishersData.update('alumni', id, { name, batchYear, position, achievements, photo });
       this.showToast('Alumni updated successfully');
     } else {
-      VanquishersData.add('alumni', { name, batchYear, position, achievements, photo });
+      await VanquishersData.add('alumni', { name, batchYear, position, achievements, photo });
       this.showToast('Alumni added successfully');
     }
     document.getElementById('alumniModal').remove();
     this.viewBatch(batchYear);
   },
 
-  deleteAlumni(id) {
+  async deleteAlumni(id) {
     if (confirm('Are you sure you want to remove this alumni?')) {
       const batch = VanquishersData.getAll('alumni').find(a => a.id === id)?.batchYear;
-      VanquishersData.remove('alumni', id);
+      await VanquishersData.remove('alumni', id);
       this.showToast('Alumni removed');
       if (batch) this.viewBatch(batch);
       else this.navigate('alumni');
@@ -1146,7 +1146,7 @@ const App = {
     overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.remove(); });
   },
 
-  savePlayer(id) {
+  async savePlayer(id) {
     const name = document.getElementById('playerName').value.trim();
     const position = document.getElementById('playerPosition').value;
     const batchYear = parseInt(document.getElementById('playerBatch').value);
@@ -1157,19 +1157,19 @@ const App = {
     if (!name || !batchYear) { this.showToast('Please fill all required fields', 'error'); return; }
 
     if (id) {
-      VanquishersData.update('players', id, { name, position, batchYear, phone, matches, wins });
+      await VanquishersData.update('players', id, { name, position, batchYear, phone, matches, wins });
       this.showToast('Player updated successfully');
     } else {
-      VanquishersData.add('players', { name, position, batchYear, phone, matches, wins });
+      await VanquishersData.add('players', { name, position, batchYear, phone, matches, wins });
       this.showToast('Player added successfully');
     }
     document.getElementById('playerModal').remove();
     this.navigate('players');
   },
 
-  deletePlayer(id) {
+  async deletePlayer(id) {
     if (confirm('Are you sure you want to remove this player?')) {
-      VanquishersData.remove('players', id);
+      await VanquishersData.remove('players', id);
       this.showToast('Player removed');
       this.navigate('players');
     }
@@ -1442,13 +1442,13 @@ const App = {
     overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.remove(); });
   },
 
-  updateScore(id) {
+  async updateScore(id) {
     const scoreA = Math.max(0, parseInt(document.getElementById('scoreA').value) || 0);
     const scoreB = Math.max(0, parseInt(document.getElementById('scoreB').value) || 0);
     const set = document.getElementById('scoreSet').value;
     const status = document.getElementById('scoreStatus').value;
 
-    const success = VanquishersData.updateMatchScore(id, scoreA, scoreB, set, status);
+    const success = await VanquishersData.updateMatchScore(id, scoreA, scoreB, set, status);
     if (success) {
       document.getElementById('scoreModal').remove();
       this.renderMatches();
@@ -1457,7 +1457,7 @@ const App = {
   },
 
   // ====== LIVE SCORE SHEET ======
-  renderScoreSheet(id) {
+  async renderScoreSheet(id) {
     const match = VanquishersData.getAll('matches').find(m => m.id === id);
     if (!match) return;
     const isAdmin = VanquishersData.getUser().role === 'admin';
@@ -1470,7 +1470,7 @@ const App = {
         { scoreA: 0, scoreB: 0, teamAStrike: [], teamBStrike: [], timeouts: { teamA: false, teamB: false } }
       ];
       match.currentSet = 1;
-      VanquishersData.update('matches', id, { sets: match.sets, currentSet: match.currentSet });
+      await VanquishersData.update('matches', id, { sets: match.sets, currentSet: match.currentSet });
     }
 
     const setIdx = (match.currentSet || 1) - 1;
@@ -1568,7 +1568,7 @@ const App = {
     return html;
   },
 
-  awardPoint(matchId, team, point) {
+  async awardPoint(matchId, team, point) {
     const match = VanquishersData.getAll('matches').find(m => m.id === matchId);
     const setIdx = (match.currentSet || 1) - 1;
     const set = match.sets[setIdx];
@@ -1591,12 +1591,12 @@ const App = {
       set.scoreB = set.teamBStrike.length > 0 ? Math.max(0, ...set.teamBStrike) : 0;
     }
 
-    VanquishersData.update('matches', matchId, { sets: match.sets });
+    await VanquishersData.update('matches', matchId, { sets: match.sets });
     this.renderScoreSheet(matchId);
     this.checkSideChange(set.scoreA, set.scoreB);
   },
 
-  adjustScore(matchId, team, delta) {
+  async adjustScore(matchId, team, delta) {
     const match = VanquishersData.getAll('matches').find(m => m.id === matchId);
     const setIdx = (match.currentSet || 1) - 1;
     const set = match.sets[setIdx];
@@ -1621,7 +1621,7 @@ const App = {
       }
     }
 
-    VanquishersData.update('matches', matchId, { sets: match.sets });
+    await VanquishersData.update('matches', matchId, { sets: match.sets });
     this.renderScoreSheet(matchId);
     this.checkSideChange(set.scoreA, set.scoreB);
   },
@@ -1652,7 +1652,7 @@ const App = {
     overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.remove(); });
   },
 
-  awardSetResult(matchId, winningTeam) {
+  async awardSetResult(matchId, winningTeam) {
     const match = VanquishersData.getAll('matches').find(m => m.id === matchId);
     if (!match) return;
 
@@ -1663,9 +1663,9 @@ const App = {
     document.getElementById('setWinnerModal').remove();
 
     if (nextSet > 3) {
-      this.finishMatch(matchId);
+      await this.finishMatch(matchId);
     } else {
-      VanquishersData.update('matches', matchId, { currentSet: nextSet });
+      await VanquishersData.update('matches', matchId, { currentSet: nextSet });
       this.showSetWinnerAlert(winnerName);
       setTimeout(() => {
         this.renderScoreSheet(matchId);
@@ -1681,7 +1681,7 @@ const App = {
     setTimeout(() => alert.classList.remove('show'), 5000);
   },
 
-  finishMatch(matchId) {
+  async finishMatch(matchId) {
     const match = VanquishersData.getAll('matches').find(m => m.id === matchId);
     if (!match) return;
 
@@ -1694,7 +1694,7 @@ const App = {
         else if (s.scoreB > s.scoreA) setsB++;
       });
 
-      VanquishersData.update('matches', matchId, {
+      await VanquishersData.update('matches', matchId, {
         status: 'completed',
         scoreA: setsA,
         scoreB: setsB
@@ -1717,8 +1717,8 @@ const App = {
     }
   },
 
-  switchSet(matchId, setNum) {
-    VanquishersData.update('matches', matchId, { currentSet: setNum });
+  async switchSet(matchId, setNum) {
+    await VanquishersData.update('matches', matchId, { currentSet: setNum });
     this.renderScoreSheet(matchId);
   },
 
@@ -1757,35 +1757,34 @@ const App = {
     if (match) this.renderScoreSheet(match.id);
   },
 
-  saveMatch(id) {
+  async saveMatch(id) {
+    const type = document.getElementById('matchType').value;
     const teamA = document.getElementById('matchTeamA').value.trim();
     const teamB = document.getElementById('matchTeamB').value.trim();
+    const status = document.getElementById('matchStatus').value;
     const date = document.getElementById('matchDate').value;
     const venue = document.getElementById('matchVenue').value.trim();
-    const status = document.getElementById('matchStatus').value;
-    const scoreA = Math.max(0, parseInt(document.getElementById('matchScoreA').value) || 0);
-    const scoreB = Math.max(0, parseInt(document.getElementById('matchScoreB').value) || 0);
-    const set = document.getElementById('matchSet').value.trim();
-    const type = document.getElementById('matchType').value;
 
-    if (!teamA || !teamB || !date) { this.showToast('Please fill all required fields', 'error'); return; }
+    if (!teamA || !teamB || !date) { this.showToast('Please fill all fields', 'error'); return; }
 
     if (id) {
-      VanquishersData.update('matches', id, { teamA, teamB, date, venue, status, scoreA, scoreB, set, type });
-      this.showToast('Match updated');
+      await VanquishersData.update('matches', id, { type, teamA, teamB, status, date, venue });
+      this.showToast('Match updated successfully');
     } else {
-      VanquishersData.add('matches', { teamA, teamB, date, venue, status, scoreA, scoreB, set, type });
-      this.showToast('Match created');
+      await VanquishersData.add('matches', { type, teamA, teamB, status, date, venue });
+      this.showToast('Match created successfully');
     }
     document.getElementById('matchModal').remove();
     this.navigate('matches');
   },
 
-  deleteMatch(id) {
+  async deleteMatch(id) {
     if (confirm('Delete this match?')) {
-      VanquishersData.remove('matches', id);
+      await VanquishersData.remove('matches', id);
       this.showToast('Match deleted');
-      this.navigate('matches');
+      // If deleted from Home page, stay on home or navigate to matches
+      if (this.currentPage === 'home') this.navigate('home');
+      else this.navigate('matches');
     }
   },
 
@@ -1954,7 +1953,7 @@ const App = {
     overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.remove(); });
   },
 
-  savePointsTeam(id, redirectType = null) {
+  async savePointsTeam(id, redirectType = null) {
     const team = document.getElementById('ptTeam').value.trim();
     const played = Math.max(0, parseInt(document.getElementById('ptPlayed').value) || 0);
     const won = Math.max(0, parseInt(document.getElementById('ptWon').value) || 0);
@@ -1968,19 +1967,19 @@ const App = {
     if (!team) { this.showToast('Please enter team name', 'error'); return; }
 
     if (id) {
-      VanquishersData.update('points', id, { team, played, won, lost, draw, points, nrr, color, type });
+      await VanquishersData.update('points', id, { team, played, won, lost, draw, points, nrr, color, type });
       this.showToast('Team updated');
     } else {
-      VanquishersData.add('points', { team, played, won, lost, draw, points, nrr, color, type });
+      await VanquishersData.add('points', { team, played, won, lost, draw, points, nrr, color, type });
       this.showToast('Team added');
     }
     document.getElementById('pointsModal').remove();
     this.renderPoints(document.getElementById('pageContent'), type);
   },
 
-  deletePointsTeam(id, currentType) {
-    if (confirm('Remove this team from standings?')) {
-      VanquishersData.remove('points', id);
+  async deletePointsTeam(id, currentType) {
+    if (confirm('Are you sure you want to delete this team from points table?')) {
+      await VanquishersData.remove('points', id);
       this.showToast('Team removed');
       this.renderPoints(document.getElementById('pageContent'), currentType);
     }
@@ -2040,11 +2039,11 @@ const App = {
     if (isAdmin) this.generateTeamInputs();
   },
 
-  auctionResume() {
+  async auctionResume() {
     const auction = VanquishersData.getAuction();
     if (auction) {
       auction.started = true;
-      VanquishersData.saveAuction(auction);
+      await VanquishersData.saveAuction(auction);
     }
     this.navigate('auction');
   },
@@ -2068,7 +2067,7 @@ const App = {
     container.innerHTML = html;
   },
 
-  startManualAssignment() {
+  async startManualAssignment() {
     const count = Math.max(2, Math.min(20, parseInt(document.getElementById('auctionTeamCount').value) || 3));
     const teamColors = ['#00e5ff', '#e040fb', '#ffd740', '#69f0ae', '#ff9100', '#ff5252', '#ba68c8', '#40c4ff', '#ff6e40', '#b388ff', '#84ffff', '#f4ff81', '#ff80ab', '#a7ffeb', '#ffd180', '#ea80fc', '#80d8ff', '#ccff90', '#ff9e80', '#b9f6ca'];
     const teams = [];
@@ -2091,18 +2090,17 @@ const App = {
       pool: alumni
     };
     
-    VanquishersData.saveAuction(auctionState);
+    await VanquishersData.saveAuction(auctionState);
     this.showToast('Manual Assignment Board Started!');
     this.navigate('auction');
   },
 
-  assignPlayerToTeam(playerId, teamName) {
+  async assignPlayerToTeam(playerId, teamName) {
     if (!teamName) return;
     const auction = VanquishersData.getAuction();
     if (!auction) return;
     
     // Find player in pool
-    // Use == to handle potential type mismatch (number vs string)
     const playerIndex = auction.pool.findIndex(p => String(p.id) === String(playerId));
     if (playerIndex === -1) {
       console.error('Player not found in pool', playerId);
@@ -2123,7 +2121,7 @@ const App = {
     player.soldTo = teamName;
     team.players.push({ ...player });
     
-    VanquishersData.saveAuction(auction);
+    await VanquishersData.saveAuction(auction);
     this.showToast(`Assigned ${player.name} to ${team.name}`);
     this.navigate('auction');
   },
@@ -2412,11 +2410,11 @@ const App = {
     }
   },
 
-  auctionReset() {
+  async endAuction() {
     const auction = VanquishersData.getAuction();
     if (!auction) return;
 
-    // Check minimum players (7)
+    // Check if each team has at least 7 players (optional rule)
     const teamsUnderMin = auction.teams.filter(t => t.players.length < 7);
     if (teamsUnderMin.length > 0) {
       const teamNames = teamsUnderMin.map(t => t.name).join(', ');
@@ -2427,7 +2425,7 @@ const App = {
     if (confirm('End the auction? Teams and assignments will be saved and shown as final results.')) {
       auction.completed = true;
       auction.started = false;
-      VanquishersData.saveAuction(auction);
+      await VanquishersData.saveAuction(auction);
       this.showToast('Auction ended! Results are now live.');
       this.navigate('auction');
     }
